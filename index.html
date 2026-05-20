@@ -1,345 +1,622 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>SAT Practice</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f3;color:#1a1a1a;min-height:100vh}
-.wrap{max-width:740px;margin:0 auto;padding:2rem 1rem}
-h1{font-size:22px;font-weight:500}h2{font-size:18px;font-weight:500}
-.muted{color:#888;font-size:13px}
-.card{background:#fff;border:1px solid #e5e5e3;border-radius:12px;padding:1.25rem;margin-bottom:.75rem}
-.fl{font-size:11px;font-weight:500;color:#888;letter-spacing:.05em;display:block;margin-bottom:5px}
-input[type=email],input[type=text]{width:100%;padding:8px 11px;border:1px solid #ddd;border-radius:8px;font-size:13px;font-family:inherit;background:#fafaf9;color:#1a1a1a}
-input:focus{outline:none;border-color:#999}
-.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border:1px solid #ccc;border-radius:8px;background:transparent;font-size:13px;cursor:pointer;font-family:inherit;white-space:nowrap}
-.btn:hover{background:#f0f0ee}.btn:active{transform:scale(.98)}
-.btn-p{background:#1a1a1a;color:#fff;border-color:#1a1a1a}.btn-p:hover{background:#333}
-.btn-sm{padding:5px 11px;font-size:12px}
-.btn-red{border-color:#f0b4b4;color:#A32D2D;background:#FCEBEB}.btn-red:hover{background:#f8dada}
-.btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
-.mc{background:#fff;border:1px solid #e5e5e3;border-radius:12px;padding:1rem;display:flex;flex-direction:column;gap:7px}
-.mc.empty{background:#fafaf9;border-style:dashed}.mc.ready{border-color:#c5dab5}
-.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;font-weight:500}
-.badge-rw{background:#e8f0fe;color:#1a56b0}.badge-math{background:#fef3e2;color:#92400e}
-.badge-gray{background:#f0f0ee;color:#666}
-.passage{background:#f9f9f7;border-left:3px solid #ddd;padding:10px 14px;border-radius:0 8px 8px 0;font-size:13px;color:#555;margin-bottom:12px;line-height:1.7;white-space:pre-wrap}
-.qtext{font-size:15px;margin-bottom:12px;line-height:1.6}
-.opt{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;border:1px solid #e5e5e3;border-radius:8px;cursor:pointer;margin-bottom:7px;transition:border-color .1s,background .1s}
-.opt:hover{border-color:#bbb;background:#fafaf9}.opt.sel{border-color:#999;background:#f5f5f3}
-.opt.ok{border-color:#3B6D11;background:#EAF3DE}.opt.ok .lt{border-color:#3B6D11;color:#3B6D11}
-.opt.bad{border-color:#A32D2D;background:#FCEBEB}.opt.bad .lt{border-color:#A32D2D;color:#A32D2D}
-.lt{width:24px;height:24px;min-width:24px;border:1px solid #ccc;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500}
-.ot{font-size:13px;line-height:1.6;padding-top:2px}
-.expl{font-size:13px;color:#555;padding:9px 13px;background:#f5f5f3;border-radius:8px;margin-top:10px;line-height:1.6}
-.prog{height:3px;background:#e5e5e3;border-radius:2px;margin-bottom:1.25rem}
-.prog-f{height:100%;background:#1a1a1a;border-radius:2px;transition:width .3s}
-.tag{font-size:11px;padding:2px 9px;border-radius:6px;background:#f0f0ee;color:#666;border:1px solid #e5e5e3}
-.nav-row{display:flex;gap:7px;margin-top:14px;flex-wrap:wrap;align-items:center}
-.score-big{font-size:52px;font-weight:500}
-.rr{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid #f0f0ee;font-size:12px}
-.ld{width:26px;height:26px;border:2px solid #e5e5e3;border-top-color:#1a1a1a;border-radius:50%;animation:spin .7s linear infinite}
+:root{
+  --bg:#080812;--bg2:#0f0f1a;--bg3:#141420;
+  --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.13);
+  --p1:#7c3aed;--p2:#2563eb;--p3:#06b6d4;
+  --success:#10b981;--warn:#f59e0b;--danger:#ef4444;
+  --t1:#f1f5f9;--t2:#94a3b8;--t3:#475569;
+}
+html,body{height:100%;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0;}
+.orb{position:fixed;border-radius:50%;filter:blur(110px);pointer-events:none;z-index:0;}
+.o1{width:600px;height:600px;background:#7c3aed;opacity:.1;top:-200px;left:-200px;animation:d1 14s ease-in-out infinite;}
+.o2{width:500px;height:500px;background:#2563eb;opacity:.08;top:30%;right:-200px;animation:d2 11s ease-in-out infinite;}
+.o3{width:400px;height:400px;background:#06b6d4;opacity:.07;bottom:-100px;left:25%;animation:d3 16s ease-in-out infinite;}
+@keyframes d1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,30px) scale(1.04)}}
+@keyframes d2{0%,100%{transform:translate(0,0)}50%{transform:translate(-30px,-40px)}}
+@keyframes d3{0%,100%{transform:translate(0,0)}50%{transform:translate(20px,-25px)}}
+#root{position:relative;z-index:1;min-height:100vh;}
+.wrap{max-width:780px;margin:0 auto;padding:2rem 1rem;}
+.page{animation:pi .28s ease forwards;}
+@keyframes pi{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* Cards */
+.card{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:16px;padding:1.25rem;backdrop-filter:blur(8px);transition:border-color .2s,box-shadow .2s;}
+
+/* Gradient text */
+.grad{background:linear-gradient(135deg,#a78bfa,#60a5fa,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;border:none;transition:all .18s;white-space:nowrap;}
+.btn:active{transform:scale(.97);}
+.btn-p{background:linear-gradient(135deg,var(--p1),var(--p2));color:#fff;box-shadow:0 0 20px rgba(124,58,237,.25);}
+.btn-p:hover{box-shadow:0 0 30px rgba(124,58,237,.45);filter:brightness(1.08);}
+.btn-g{background:rgba(255,255,255,.07);color:var(--t1);border:1px solid var(--border);}
+.btn-g:hover{background:rgba(255,255,255,.11);}
+.btn-r{background:rgba(239,68,68,.1);color:#fca5a5;border:1px solid rgba(239,68,68,.2);}
+.btn-r:hover{background:rgba(239,68,68,.18);}
+.btn-teal{background:rgba(6,182,212,.1);color:#67e8f9;border:1px solid rgba(6,182,212,.25);}
+.btn-teal:hover{background:rgba(6,182,212,.18);}
+.btn-sm{padding:5px 12px;font-size:12px;border-radius:8px;}
+.btn:disabled{opacity:.3;cursor:not-allowed;transform:none!important;filter:none!important;}
+
+/* Input */
+input[type=email],input[type=text],input[type=password]{width:100%;padding:10px 13px;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;font-size:13px;color:var(--t1);font-family:inherit;transition:border-color .2s;}
+input:focus{outline:none;border-color:rgba(124,58,237,.5);box-shadow:0 0 0 3px rgba(124,58,237,.1);}
+.fl{font-size:11px;font-weight:500;color:var(--t3);letter-spacing:.05em;display:block;margin-bottom:5px;}
+
+/* Tags & Badges */
+.badge{display:inline-flex;align-items:center;font-size:11px;padding:3px 9px;border-radius:20px;font-weight:500;}
+.b-rw{background:rgba(139,92,246,.18);color:#c4b5fd;border:1px solid rgba(139,92,246,.3);}
+.b-math{background:rgba(59,130,246,.18);color:#93c5fd;border:1px solid rgba(59,130,246,.3);}
+.b-green{background:rgba(16,185,129,.15);color:#6ee7b7;border:1px solid rgba(16,185,129,.25);}
+.b-gray{background:rgba(255,255,255,.06);color:var(--t3);border:1px solid var(--border);}
+.tag{font-size:11px;padding:2px 9px;border-radius:20px;background:rgba(255,255,255,.07);color:var(--t2);border:1px solid var(--border);}
+
+/* Messages */
+.err{font-size:13px;color:#fca5a5;padding:10px 14px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:10px;margin-bottom:.75rem;}
+
+/* Quiz options */
+.opt{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;cursor:pointer;margin-bottom:8px;transition:all .15s ease;}
+.opt:hover{background:rgba(255,255,255,.07);border-color:var(--border2);}
+.opt.sel{background:rgba(124,58,237,.1);border-color:rgba(124,58,237,.45);}
+.opt.sel .lt{background:rgba(124,58,237,.25);border-color:var(--p1);color:#c4b5fd;}
+.opt.ok{background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.4);}
+.opt.ok .lt{background:rgba(16,185,129,.2);border-color:var(--success);color:#6ee7b7;}
+.opt.bad{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.3);}
+.opt.bad .lt{border-color:var(--danger);color:#fca5a5;}
+.lt{width:26px;height:26px;min-width:26px;border:1px solid rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;transition:all .15s;}
+.ot{font-size:13px;line-height:1.65;padding-top:3px;color:#e2e8f0;}
+
+/* Passage */
+.passage{background:rgba(255,255,255,.03);border-left:3px solid rgba(139,92,246,.5);padding:14px 18px;border-radius:0 12px 12px 0;font-size:13px;color:var(--t2);margin-bottom:16px;line-height:1.8;white-space:pre-wrap;}
+
+/* Progress */
+.pbar{height:3px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;}
+.pbar-f{height:100%;background:linear-gradient(90deg,var(--p1),var(--p2));border-radius:4px;transition:width .4s ease;}
+
+/* Back nav */
+.back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--t3);cursor:pointer;border:none;background:none;font-family:inherit;padding:0;margin-bottom:1.5rem;transition:color .15s;}
+.back:hover{color:var(--t2);}
+
+/* Grid */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;}
+@media(max-width:580px){.g2{grid-template-columns:1fr;}.g4{grid-template-columns:1fr 1fr;}}
+
+/* Module card */
+.mc{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:14px;padding:1rem;display:flex;flex-direction:column;gap:8px;transition:all .2s ease;}
+.mc:hover{border-color:rgba(255,255,255,.13);background:rgba(255,255,255,.06);}
+.mc.done{border-color:rgba(16,185,129,.18);}
+.mc.empty{opacity:.55;border-style:dashed;}
+
+/* Stats */
+.stat{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:14px;padding:1rem 1.25rem;}
+.stat-v{font-size:28px;font-weight:700;letter-spacing:-.03em;}
+.stat-l{font-size:12px;color:var(--t3);margin-top:2px;}
+
+/* Score ring */
+.ring-w{position:relative;display:inline-flex;align-items:center;justify-content:center;}
+.ring-lbl{position:absolute;text-align:center;}
+
+/* Chart */
+.chart-svg{width:100%;overflow:visible;}
+
+/* Loader */
+.ld{width:24px;height:24px;border:2px solid rgba(255,255,255,.08);border-top-color:var(--p1);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;}
 @keyframes spin{to{transform:rotate(360deg)}}
-.err{font-size:13px;color:#A32D2D;padding:9px 13px;background:#FCEBEB;border-radius:8px;margin-bottom:.75rem}
-.hint{font-size:12px;color:#888;margin-top:5px;line-height:1.5}
-.back{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:#888;cursor:pointer;margin-bottom:1.25rem;border:none;background:none;font-family:inherit;padding:0}
-.back:hover{color:#1a1a1a}
-.test-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #f5f5f3;cursor:pointer}
-.test-row:last-child{border-bottom:none}
-.test-row:hover .tn{text-decoration:underline}
-.tn{font-size:15px;font-weight:500;flex:1}
-.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
-.atrow{display:flex;gap:5px;flex-wrap:wrap;margin-top:3px;align-items:center}
+
+/* Tip card */
+.tip{padding:.8rem 1rem;background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.18);border-radius:10px;font-size:13px;color:#c4b5fd;line-height:1.6;margin-bottom:.5rem;display:flex;gap:8px;}
+.tip::before{content:'\2728';flex-shrink:0;}
+
+/* Wrong answer card */
+.wrong-card{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.12);border-radius:10px;padding:.8rem 1rem;margin-bottom:.5rem;font-size:13px;}
+
+/* SAT score pill */
+.sat-pill{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.25);border-radius:20px;font-size:13px;font-weight:500;}
+
+/* Divider */
+.div{height:1px;background:rgba(255,255,255,.06);margin:.75rem 0;}
+
+/* Test cards */
+.tcard{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:16px;padding:1.25rem 1.5rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:14px;margin-bottom:.6rem;}
+.tcard:hover{border-color:rgba(139,92,246,.35);background:rgba(124,58,237,.07);transform:translateX(3px);}
+.tcard-icon{width:44px;height:44px;min-width:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,rgba(124,58,237,.25),rgba(37,99,235,.25));border:1px solid rgba(124,58,237,.25);}
+
+/* Dot history */
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;transition:transform .15s;}
+.dot:hover{transform:scale(1.3);}
+
+/* Score counter animation */
+@keyframes countIn{from{opacity:0;transform:scale(.7) translateY(10px)}to{opacity:1;transform:none}}
+.score-anim{animation:countIn .6s cubic-bezier(.34,1.56,.64,1) forwards;}
+
+/* Tab */
+.tab{display:inline-flex;gap:4px;background:rgba(255,255,255,.05);border:1px solid var(--border);padding:4px;border-radius:12px;margin-bottom:1.25rem;}
+.tab-btn{padding:6px 14px;border-radius:9px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--t2);font-family:inherit;transition:all .15s;}
+.tab-btn.active{background:rgba(124,58,237,.3);color:#c4b5fd;}
+
+/* Nav row */
+.nav-row{display:flex;gap:7px;margin-top:14px;flex-wrap:wrap;align-items:center;}
+
+/* Results score */
+.score-big{font-size:64px;font-weight:800;letter-spacing:-.04em;line-height:1;}
 </style>
 </head>
 <body>
-<div class="wrap"><div id="app"></div></div>
+<div class="o1 orb"></div><div class="o2 orb"></div><div class="o3 orb"></div>
+<div id="root"><div class="wrap"><div id="app" class="page"></div></div></div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL  = 'https://cvvqhforzpdjjhxibkeg.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2dnFoZm9yenBkampoeGlia2VnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NTM5MjYsImV4cCI6MjA5NDUyOTkyNn0.rpbJ7SB1SDdjQRHMHYPNQ04BRJbvWFYWJn80IEhToPU';
+const SURL='https://cvvqhforzpdjjhxibkeg.supabase.co';
+const SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2dnFoZm9yenBkampoeGlia2VnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NTM5MjYsImV4cCI6MjA5NDUyOTkyNn0.rpbJ7SB1SDdjQRHMHYPNQ04BRJbvWFYWJn80IEhToPU';
+const {createClient}=supabase;const db=createClient(SURL,SKEY);
 
-const { createClient } = supabase;
-const db = createClient(SUPABASE_URL, SUPABASE_ANON);
+const MODS=[{id:'RW1',label:'R&W \u2014 Mod 1',s:'rw'},{id:'RW2',label:'R&W \u2014 Mod 2',s:'rw'},{id:'Math1',label:'Math \u2014 Mod 1',s:'math'},{id:'Math2',label:'Math \u2014 Mod 2',s:'math'}];
+const fmtD=d=>d?new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'';
+const pct=(s,t)=>t?Math.round(s/t*100):0;
+const avg=a=>a.length?Math.round(a.reduce((x,y)=>x+y,0)/a.length):null;
+const clamp=(v,mn,mx)=>Math.max(mn,Math.min(mx,v));
 
-const MODS = [
-  {id:'RW1',  label:'R&W \u2014 Module 1',subject:'rw'},
-  {id:'RW2',  label:'R&W \u2014 Module 2',subject:'rw'},
-  {id:'Math1',label:'Math \u2014 Module 1',subject:'math'},
-  {id:'Math2',label:'Math \u2014 Module 2',subject:'math'},
-];
-const fmtDate = d=>d?new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'';
-const pct = (s,t)=>t?Math.round(s/t*100):0;
+const S={stage:'loading',user:null,tests:[],ua:{},activeT:null,activeMod:null,tab:'tests',
+  qqs:[],qi:0,qans:{},qrev:{},qmode:'full',qmodDbId:null,qsaved:false,
+  err:'',ae:'',as:false};
 
-const S = {
-  stage:'loading', user:null,
-  tests:[], userAttempts:{},
-  activeTestId:null, activeModId:null,
-  quizQs:[], quizCurrent:0, quizAnswers:{}, quizRevealed:{},
-  quizMode:'full', quizModDbId:null, quizSaved:false,
-  err:'', authEmail:'', authSent:false,
-};
-
-function r(){
-  const fn={loading:loadingScreen,auth:authScreen,home:homeScreen,test:testScreen,quiz,results};
-  document.getElementById('app').innerHTML=(fn[S.stage]||loadingScreen)();
-  bind();
+// ── ANALYTICS HELPERS ─────────────────────────────────
+function modScores(modType){
+  const scores=[];
+  for(const t of S.tests){
+    const mod=t.modules[modType];if(!mod)continue;
+    const atts=(S.ua[mod.id]||[]).filter(a=>a.mode==='full');
+    if(atts.length){const l=atts[atts.length-1];scores.push(pct(l.score,l.total));}
+  }
+  return scores;
 }
 
-function loadingScreen(){return`<div style="display:flex;flex-direction:column;align-items:center;padding:5rem 0;gap:14px"><div class="ld"></div><p class="muted">Loading...</p></div>`;}
+function estimateSAT(){
+  const rw=[...modScores('RW1'),...modScores('RW2')];
+  const math=[...modScores('Math1'),...modScores('Math2')];
+  const rwAvg=avg(rw),mathAvg=avg(math);
+  const rwScore=rwAvg!==null?clamp(200+Math.round(rwAvg/100*600),200,800):null;
+  const mathScore=mathAvg!==null?clamp(200+Math.round(mathAvg/100*600),200,800):null;
+  const total=(rwScore&&mathScore)?rwScore+mathScore:null;
+  return{rw:rwScore,math:mathScore,total};
+}
 
-function authScreen(){
-  if(S.authSent) return`<div style="max-width:400px;margin:4rem auto">
+function allAttemptsSorted(){
+  const pts=[];
+  for(const t of S.tests)for(const mod of Object.values(t.modules)){
+    if(!mod)continue;
+    for(const a of(S.ua[mod.id]||[])){
+      if(a.mode==='full') pts.push({date:a.date,p:pct(a.score,a.total),score:a.score,total:a.total});
+    }
+  }
+  return pts.sort((a,b)=>new Date(a.date)-new Date(b.date));
+}
+
+function consistentErrors(){
+  // Questions wrong in last 2+ attempts per module
+  const errors=[];
+  for(const t of S.tests){
+    for(const [mt,mod] of Object.entries(t.modules)){
+      if(!mod)continue;
+      const atts=(S.ua[mod.id]||[]).filter(a=>a.mode==='full');
+      if(atts.length<2)continue;
+      const last2=atts.slice(-2);
+      mod.questions.forEach((q,i)=>{
+        const wrong=last2.filter(a=>a.answers[String(i)]!==q.answer).length;
+        if(wrong===2) errors.push({modLabel:MODS.find(m=>m.id===mt)?.label||mt,qNum:q.number||i+1,q:q.question,ans:q.answer,exp:q.explanation});
+      });
+    }
+  }
+  return errors.slice(0,8);
+}
+
+function tips(){
+  const rwA=avg([...modScores('RW1'),...modScores('RW2')]);
+  const mA=avg([...modScores('Math1'),...modScores('Math2')]);
+  const t=[];
+  if(rwA===null&&mA===null)return['Complete practice modules to unlock personalised tips.'];
+  if(rwA!==null&&rwA<60)t.push('R&W needs work \u2014 focus on command of evidence and transitions between ideas.');
+  if(rwA!==null&&rwA>=60&&rwA<80)t.push('R&W is solid. Target rhetorical synthesis questions to break into the 700s.');
+  if(rwA!==null&&rwA>=80)t.push('Excellent R&W! Fine-tune words in context and punctuation for a near-perfect score.');
+  if(mA!==null&&mA<60)t.push('Math foundations need attention \u2014 review linear equations, ratios, and basic functions.');
+  if(mA!==null&&mA>=60&&mA<80)t.push('Good math base. Drill advanced algebra, quadratics, and data analysis to improve.');
+  if(mA!==null&&mA>=80)t.push('Strong math! Hard geometry and systems of equations questions are your final hurdles.');
+  if(rwA!==null&&mA!==null&&mA<rwA-15)t.push('Math is noticeably behind R&W. Prioritise 3 math sessions per week.');
+  if(rwA!==null&&mA!==null&&rwA<mA-15)t.push('R&W is trailing math. Spend more time on reading comprehension passages.');
+  const pts=allAttemptsSorted();
+  if(pts.length>=4){const recent=pts.slice(-3).map(p=>p.p);const trend=recent[2]-recent[0];if(trend>8)t.push('Your score is trending upward \u2014 keep the momentum going!');else if(trend<-8)t.push('Scores have dipped recently. Take a harder look at your wrong answers after each session.');}
+  return t.length?t:['Keep practising consistently. Aim for at least one full test per week.'];
+}
+
+// ── SVG HELPERS ───────────────────────────────────────
+function ring(score,total,sz=68){
+  const p=total?score/total:0;const r2=sz/2-6;const c=2*Math.PI*r2;const fill=c*p;
+  const col=p>=.8?'#10b981':p>=.6?'#f59e0b':'#ef4444';
+  const txt=total?Math.round(p*100)+'%':'—';
+  return`<div class="ring-w" style="width:${sz}px;height:${sz}px">
+    <svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}" style="transform:rotate(-90deg)">
+      <circle cx="${sz/2}" cy="${sz/2}" r="${r2}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="5"/>
+      <circle cx="${sz/2}" cy="${sz/2}" r="${r2}" fill="none" stroke="${col}" stroke-width="5"
+        stroke-dasharray="${fill.toFixed(1)} ${c.toFixed(1)}" stroke-linecap="round"/>
+    </svg>
+    <div class="ring-lbl"><div style="font-size:${sz<60?11:13}px;font-weight:700;color:${col}">${txt}</div>
+      ${total?`<div style="font-size:10px;color:#475569">${score}/${total}</div>`:''}
+    </div></div>`;}
+
+function lineChart(pts,w=500,h=90){
+  if(pts.length<2)return`<p style="font-size:12px;color:#475569;text-align:center;padding:1.5rem 0">Not enough data yet</p>`;
+  const mn=Math.min(...pts),mx=Math.max(...pts),rng=mx-mn||10;
+  const xs=pts.map((_,i)=>10+(i/(pts.length-1))*(w-20));
+  const ys=pts.map(p=>h-12-((p-mn)/rng)*(h-24));
+  const path=xs.map((x,i)=>`${i?'L':'M'}${x},${ys[i]}`).join(' ');
+  const area=`M${xs[0]},${h} `+xs.map((x,i)=>`L${x},${ys[i]}`).join(' ')+` L${xs[xs.length-1]},${h} Z`;
+  return`<svg class="chart-svg" height="${h}" viewBox="0 0 ${w} ${h}">
+    <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7c3aed" stop-opacity=".3"/><stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/>
+    </linearGradient></defs>
+    <path d="${area}" fill="url(#cg)"/>
+    <path d="${path}" fill="none" stroke="#7c3aed" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    ${xs.map((x,i)=>`<circle cx="${x}" cy="${ys[i]}" r="4" fill="#7c3aed" stroke="#080812" stroke-width="2"/>`).join('')}
+    <text x="${xs[xs.length-1]}" y="${ys[ys.length-1]-8}" text-anchor="middle" font-size="11" fill="#a78bfa">${pts[pts.length-1]}%</text>
+  </svg>`;}
+
+// ── SCREENS ───────────────────────────────────────────
+function r(){
+  const fn={loading:loadSc,auth:authSc,home:homeSc,test:testSc,quiz:quizSc,results:resSc};
+  document.getElementById('app').className='page';
+  document.getElementById('app').innerHTML=(fn[S.stage]||loadSc)();
+  bind();
+  if(S.stage==='results') animateScore();
+}
+
+function loadSc(){return`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px">
+  <div class="ld" style="width:32px;height:32px"></div><p style="color:#475569">Loading...</p></div>`;}
+
+function authSc(){
+  if(S.as)return`<div style="max-width:400px;margin:5rem auto;text-align:center">
+    <div style="font-size:40px;margin-bottom:1rem">\u2709\ufe0f</div>
     <h2 style="margin-bottom:.5rem">Check your email</h2>
-    <p class="muted" style="margin-bottom:1.5rem">Magic link sent to <strong>${S.authEmail}</strong>.</p>
-    <button class="btn btn-sm" id="backbtn">Back</button></div>`;
+    <p style="color:#64748b;font-size:14px;margin-bottom:1.5rem">Magic link sent to <strong style="color:#e2e8f0">${S.ae}</strong></p>
+    <button class="btn btn-g btn-sm" id="abk">Use different email</button></div>`;
   return`<div style="max-width:400px;margin:4rem auto">
-    <h1 style="margin-bottom:.25rem">SAT Practice</h1>
-    <p class="muted" style="margin-bottom:2rem">Sign in to track your progress.</p>
+    <div style="text-align:center;margin-bottom:2.5rem">
+      <h1 style="font-size:36px;font-weight:800;margin-bottom:.5rem" class="grad">SAT Practice</h1>
+      <p style="color:#64748b;font-size:14px">Track your progress. Improve your score.</p>
+    </div>
     <div class="card">
-      <button class="btn" id="googlebtn" style="width:100%;justify-content:center;gap:10px;margin-bottom:.75rem;padding:10px">
-        <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.08 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-3.59-13.46-8.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      <button class="btn btn-g" id="gbtn" style="width:100%;justify-content:center;gap:10px;padding:11px;margin-bottom:.75rem;font-size:14px">
+        <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.08 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-3.59-13.46-8.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
         Continue with Google
       </button>
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:.75rem">
-        <div style="flex:1;height:1px;background:#e5e5e3"></div><span class="muted" style="font-size:12px">or email</span><div style="flex:1;height:1px;background:#e5e5e3"></div>
+        <div style="flex:1;height:1px;background:rgba(255,255,255,.07)"></div>
+        <span style="font-size:12px;color:#475569">or</span>
+        <div style="flex:1;height:1px;background:rgba(255,255,255,.07)"></div>
       </div>
-      <input type="email" id="emailinp" placeholder="you@example.com" value="${S.authEmail}" style="margin-bottom:.75rem"/>
+      <span class="fl">EMAIL</span>
+      <input type="email" id="ei" placeholder="you@example.com" value="${S.ae}" style="margin-bottom:.75rem"/>
       ${S.err?`<div class="err" style="margin-bottom:.5rem">${S.err}</div>`:''}
-      <button class="btn btn-p" id="magicbtn" style="width:100%;justify-content:center">Send magic link</button>
-    </div></div>`;}
+      <button class="btn btn-p" id="mbtn" style="width:100%;justify-content:center;font-size:14px;padding:11px">Send magic link</button>
+    </div>
+    <p style="text-align:center;font-size:12px;color:#475569;margin-top:.75rem">No password needed</p></div>`;}
 
-function homeScreen(){
-  const rows = S.tests.length
-    ? S.tests.map(t=>{
-        const filled = MODS.filter(m=>t.modules[m.id]?.questions?.length>0).length;
-        const scores = MODS.map(m=>{
-          const mod = t.modules[m.id];
-          if(!mod) return null;
-          const atts = (S.userAttempts[mod.id]||[]);
-          return atts.length?atts[atts.length-1]:null;
-        }).filter(Boolean);
-        const avg = scores.length?Math.round(scores.reduce((a,x)=>a+pct(x.score,x.total),0)/scores.length)+'%':'—';
-        return`<div class="test-row" data-tid="${t.id}">
-          <div style="flex:1">
-            <div class="tn">${t.name}</div>
-            <div class="muted" style="margin-top:2px">${fmtDate(t.date)}&nbsp;\u00b7&nbsp;${filled}/4 modules&nbsp;\u00b7&nbsp;your avg ${avg}</div>
-          </div>
-          <span style="color:#bbb;font-size:18px">\u203a</span></div>`;
-      }).join('')
-    : `<p class="muted" style="padding:1.5rem 0">No tests available yet.</p>`;
+function homeSc(){
+  const sat=estimateSAT();
+  const allAtts=allAttemptsSorted();
+  const totalMods=Object.values(S.tests.flatMap(t=>Object.values(t.modules))).filter(m=>m&&(S.ua[m.id]||[]).length>0).length;
+  const satDisplay=sat.total?`<div class="sat-pill" style="margin-bottom:.4rem"><span style="color:#a78bfa">~</span><span class="grad" style="font-size:16px;font-weight:700">${sat.total}</span><span style="color:#64748b">/1600</span></div>`:'';
 
-  return`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
-    <div><h1>SAT Practice</h1><p class="muted" style="margin-top:2px">${S.user?.email||''}</p></div>
-    <button class="btn btn-sm btn-red" id="signoutbtn">Sign out</button>
+  const tlist=S.tests.length?S.tests.map(t=>{
+    const filled=MODS.filter(m=>t.modules[m.id]?.questions?.length>0).length;
+    const scores=MODS.map(m=>{const mod=t.modules[m.id];if(!mod)return null;const a=(S.ua[mod.id]||[]).filter(x=>x.mode==='full').slice(-1)[0];return a?pct(a.score,a.total):null;}).filter(x=>x!==null);
+    const best=scores.length?Math.max(...scores):null;
+    return`<div class="tcard" data-tid="${t.id}">
+      <div class="tcard-icon">\ud83d\udcdd</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:15px;font-weight:600;color:#e2e8f0;margin-bottom:2px">${t.name}</div>
+        <div style="font-size:12px;color:#475569">${fmtD(t.date)}${t.source?'  \u00b7  '+t.source:''}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        ${MODS.map(m=>`<div style="width:8px;height:8px;border-radius:50%;background:${t.modules[m.id]?.questions?.length?'rgba(16,185,129,.7)':'rgba(255,255,255,.1)'}" title="${m.id}"></div>`).join('')}
+        ${best!==null?`<span style="font-size:13px;font-weight:600;color:${best>=80?'#6ee7b7':best>=60?'#fcd34d':'#fca5a5'}">${best}%</span>`:'<span style="font-size:12px;color:#475569">New</span>'}
+        <span style="color:#475569;font-size:18px">\u203a</span>
+      </div>
+    </div>`;
+  }).join(''):`<div style="text-align:center;padding:3rem 0;color:#475569"><div style="font-size:32px;margin-bottom:.75rem">\ud83d\udccb</div><p>No tests available yet</p></div>`;
+
+  // Analytics tab
+  const chartPts=allAttemptsSorted().map(p=>p.p);
+  const errs=consistentErrors();
+  const ts=tips();
+  const rwAvg=avg([...modScores('RW1'),...modScores('RW2')]);
+  const mAvg=avg([...modScores('Math1'),...modScores('Math2')]);
+
+  const analyticsTab=`
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem">
+    <div class="card" style="text-align:center">
+      <div style="font-size:11px;color:#475569;margin-bottom:.5rem;letter-spacing:.05em">EST. R&W SCORE</div>
+      <div style="font-size:32px;font-weight:800;${sat.rw?`color:${sat.rw>=650?'#6ee7b7':sat.rw>=500?'#fcd34d':'#fca5a5'}`:''}">${sat.rw||'—'}</div>
+      <div style="font-size:12px;color:#475569">out of 800</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:11px;color:#475569;margin-bottom:.5rem;letter-spacing:.05em">EST. MATH SCORE</div>
+      <div style="font-size:32px;font-weight:800;${sat.math?`color:${sat.math>=650?'#6ee7b7':sat.math>=500?'#fcd34d':'#fca5a5'}`:''}">${sat.math||'—'}</div>
+      <div style="font-size:12px;color:#475569">out of 800</div>
+    </div>
   </div>
-  ${S.err?`<div class="err">${S.err}</div>`:''}
-  <div class="card" style="padding:.5rem 1.25rem">${rows}</div>`;}
+  <div class="card" style="margin-bottom:.75rem">
+    <div style="font-size:11px;color:#475569;margin-bottom:.75rem;letter-spacing:.05em">SCORE TREND (all attempts)</div>
+    ${lineChart(chartPts)}
+  </div>
+  <div class="card" style="margin-bottom:.75rem">
+    <div style="font-size:11px;color:#475569;margin-bottom:.75rem;letter-spacing:.05em">MODULE BREAKDOWN</div>
+    <div class="g4">
+      ${MODS.map(m=>{const sc=modScores(m.id);const a=avg(sc);return`<div style="text-align:center">
+        ${ring(a||0,100,60)}
+        <div style="font-size:11px;color:#475569;margin-top:4px">${m.id}</div>
+        <div style="font-size:11px;color:#64748b">${sc.length} attempt${sc.length!==1?'s':''}</div>
+      </div>`;}).join('')}
+    </div>
+  </div>
+  ${errs.length?`<div class="card" style="margin-bottom:.75rem">
+    <div style="font-size:11px;color:#475569;margin-bottom:.75rem;letter-spacing:.05em">PERSISTENTLY WRONG (\u22652 attempts)</div>
+    ${errs.map(e=>`<div class="wrong-card">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+        <span class="badge ${e.modLabel.includes('R')?'b-rw':'b-math'}" style="font-size:10px">${e.modLabel}</span>
+        <span style="font-size:11px;color:#475569">Q${e.qNum}</span>
+      </div>
+      <div style="color:#e2e8f0;margin-bottom:4px">${(e.q||'').substring(0,80)}&hellip;</div>
+      <div style="font-size:12px;color:#6ee7b7">Answer: ${e.ans}&nbsp;&nbsp;<span style="color:#64748b">${e.exp||''}</span></div>
+    </div>`).join('')}
+  </div>`:'' }
+  <div class="card">
+    <div style="font-size:11px;color:#475569;margin-bottom:.75rem;letter-spacing:.05em">PERSONALISED TIPS</div>
+    ${ts.map(t=>`<div class="tip">${t}</div>`).join('')}
+  </div>`;
 
-function testScreen(){
-  const test = S.tests.find(t=>t.id===S.activeTestId);
-  if(!test) return homeScreen();
-  const cards = MODS.map(m=>{
-    const mod = test.modules[m.id];
-    const hasQs = mod?.questions?.length>0;
-    const badge = `<span class="badge ${m.subject==='rw'?'badge-rw':'badge-math'}">${m.subject==='rw'?'R&W':'Math'}</span>`;
-    const atts = mod?(S.userAttempts[mod.id]||[]):[];
-    const lastA = atts.length?atts[atts.length-1]:null;
-    const errCnt = lastA?lastA.total-lastA.score:0;
-    if(!hasQs) return`<div class="mc empty">${badge}<h3 style="font-size:13px">${m.label}</h3><p class="muted" style="font-size:12px">Coming soon</p></div>`;
-    const dots = atts.slice(-6).map(a=>{const p=pct(a.score,a.total);return`<span class="dot" style="background:${p>=80?'#3B6D11':p>=60?'#92400e':'#A32D2D'}" title="${a.score}/${a.total}"></span>`;}).join('');
-    return`<div class="mc ready">${badge}
-      <h3 style="font-size:13px">${m.label}</h3>
-      <p class="muted" style="font-size:12px">${mod.questions.length} questions</p>
-      ${lastA?`<p style="font-size:13px">Last: <strong>${lastA.score}/${lastA.total}</strong> <span class="muted">(${pct(lastA.score,lastA.total)}%)</span></p>`:'<p class="muted" style="font-size:12px">Not attempted</p>'}
-      ${atts.length>1?`<div class="atrow">${dots}<span class="muted" style="font-size:11px">${atts.length} attempts</span></div>`:''}
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:3px">
-        <button class="btn btn-sm btn-p" data-practice="${m.id}" data-mode="full">Practice</button>
-        ${errCnt>0?`<button class="btn btn-sm btn-red" data-practice="${m.id}" data-mode="errors">Errors (${errCnt})</button>`:''}
-      </div></div>`;
+  return`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:.5rem">
+    <div>
+      <h1 style="font-size:26px;font-weight:800" class="grad">SAT Practice</h1>
+      <p style="color:#64748b;font-size:13px;margin-top:2px">${S.user?.email||''}</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
+      ${satDisplay}
+      <button class="btn btn-r btn-sm" id="sout">Sign out</button>
+    </div>
+  </div>
+
+  <div class="g4" style="margin-bottom:1.25rem">
+    <div class="stat"><div class="stat-v grad">${S.tests.length}</div><div class="stat-l">Tests available</div></div>
+    <div class="stat"><div class="stat-v" style="color:#6ee7b7">${totalMods}</div><div class="stat-l">Modules done</div></div>
+    <div class="stat"><div class="stat-v" style="color:#fcd34d">${allAtts.length?allAtts[allAtts.length-1].p+'%':'—'}</div><div class="stat-l">Last score</div></div>
+    <div class="stat"><div class="stat-v" style="color:#c4b5fd">${sat.total||'—'}</div><div class="stat-l">Est. SAT total</div></div>
+  </div>
+
+  <div class="tab">
+    <button class="tab-btn ${S.tab==='tests'?'active':''}" id="tab-tests">Tests</button>
+    <button class="tab-btn ${S.tab==='analytics'?'active':''}" id="tab-analytics">Analytics</button>
+  </div>
+
+  ${S.tab==='tests'?tlist:analyticsTab}`;}
+
+function testSc(){
+  const test=S.tests.find(t=>t.id===S.activeT);if(!test)return homeSc();
+  const cards=MODS.map(m=>{
+    const mod=test.modules[m.id];const hasQ=mod?.questions?.length>0;
+    const badge=`<span class="badge ${m.s==='rw'?'b-rw':'b-math'}">${m.s==='rw'?'R&W':'Math'}</span>`;
+    const atts=mod?(S.ua[mod.id]||[]).filter(a=>a.mode==='full'):[];
+    const last=atts.slice(-1)[0];const errCnt=last?last.total-last.score:0;
+    if(!hasQ)return`<div class="mc empty">${badge}<h3 style="font-size:13px;color:#e2e8f0">${m.label}</h3><p style="font-size:12px;color:#475569">Coming soon</p></div>`;
+    const dots=atts.slice(-6).map(a=>{const p2=pct(a.score,a.total);return`<span class="dot" style="background:${p2>=80?'#10b981':p2>=60?'#f59e0b':'#ef4444'}" title="${a.score}/${a.total}"></span>`;}).join('');
+    return`<div class="mc done">
+      ${badge}
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <h3 style="font-size:13px;color:#e2e8f0">${m.label}</h3>
+        ${ring(last?last.score:0,last?last.total:0,56)}
+      </div>
+      <p style="font-size:12px;color:#475569">${mod.questions.length} questions</p>
+      ${!last?'<p style="font-size:12px;color:#475569">Not attempted</p>':''}
+      ${atts.length>1?`<div style="display:flex;gap:5px;align-items:center">${dots}<span style="font-size:11px;color:#475569">${atts.length} attempts</span></div>`:''}
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-p btn-sm" data-pr="${m.id}" data-mo="full">Practice</button>
+        ${errCnt>0?`<button class="btn btn-r btn-sm" data-pr="${m.id}" data-mo="errors">Errors (${errCnt})</button>`:''}
+      </div>
+    </div>`;
   });
-  const tot = MODS.reduce((a,m)=>{
-    const mod=test.modules[m.id];const atts=mod?(S.userAttempts[mod.id]||[]):[];
-    const l=atts.slice(-1)[0];if(l){a.s+=l.score;a.t+=l.total;}return a;
-  },{s:0,t:0});
-  return`<button class="back" id="homebtn">\u2190 All tests</button>
-  <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.5rem">
-    <div><h2>${test.name}</h2><p class="muted">${fmtDate(test.date)}${test.source?'  \u00b7  '+test.source:''}</p></div>
-    ${tot.t>0?`<div style="text-align:right"><p style="font-size:22px;font-weight:500">${tot.s}/${tot.t}</p><p class="muted">${pct(tot.s,tot.t)}% overall</p></div>`:''}
+  const tot=MODS.reduce((a,m)=>{const mod=test.modules[m.id];const atts=mod?(S.ua[mod.id]||[]).filter(x=>x.mode==='full'):[];const l=atts.slice(-1)[0];if(l){a.s+=l.score;a.t+=l.total;}return a;},{s:0,t:0});
+  return`<button class="back" id="hbtn">\u2190 All tests</button>
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:.75rem">
+    <div>
+      <h2 style="font-size:22px;font-weight:700;color:#e2e8f0">${test.name}</h2>
+      <p style="color:#64748b;font-size:13px">${fmtD(test.date)}${test.source?'  \u00b7  '+test.source:''}</p>
+    </div>
+    ${tot.t>0?`<div style="text-align:right"><div style="font-size:28px;font-weight:800;color:${pct(tot.s,tot.t)>=80?'#6ee7b7':pct(tot.s,tot.t)>=60?'#fcd34d':'#fca5a5'}">${tot.s}/${tot.t}</div><div style="font-size:13px;color:#475569">${pct(tot.s,tot.t)}% overall</div></div>`:''}
   </div>
-  <p class="muted" style="font-size:12px;margin-bottom:.4rem">READING &amp; WRITING</p>
-  <div class="grid2" style="margin-bottom:1rem">${cards[0]}${cards[1]}</div>
-  <p class="muted" style="font-size:12px;margin-bottom:.4rem">MATH</p>
-  <div class="grid2">${cards[2]}${cards[3]}</div>`;}
+  <p style="font-size:11px;color:#475569;letter-spacing:.05em;margin-bottom:.5rem">READING &amp; WRITING</p>
+  <div class="g2" style="margin-bottom:1rem">${cards[0]}${cards[1]}</div>
+  <p style="font-size:11px;color:#475569;letter-spacing:.05em;margin-bottom:.5rem">MATH</p>
+  <div class="g2">${cards[2]}${cards[3]}</div>`;}
 
-function quiz(){
-  const q=S.quizQs[S.quizCurrent];if(!q) return'';
-  const total=S.quizQs.length,sel=S.quizAnswers[S.quizCurrent],rev=S.quizRevealed[S.quizCurrent];
+function quizSc(){
+  const q=S.qqs[S.qi];if(!q)return'';
+  const tot=S.qqs.length,sel=S.qans[S.qi],rev=S.qrev[S.qi];
+  const mod=MODS.find(m=>m.id===S.activeMod);const isLast=S.qi===tot-1;
   let opts='';
   ['A','B','C','D'].forEach(l=>{
-    if(!q.options?.[l]) return;
+    if(!q.options?.[l])return;
     let c='opt';if(sel===l&&!rev)c+=' sel';
     if(rev){if(l===q.answer)c+=' ok';else if(sel===l)c+=' bad';}
-    opts+=`<div class="${c}" data-opt="${l}"><div class="lt">${l}</div><div class="ot">${q.options[l]}</div></div>`;
+    opts+=`<div class="${c}" data-op="${l}"><div class="lt">${l}</div><div class="ot">${q.options[l]}</div></div>`;
   });
-  const mod=MODS.find(m=>m.id===S.activeModId);const isLast=S.quizCurrent===total-1;
-  return`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-    <span class="tag">${mod?.label||''}&nbsp;\u00b7&nbsp;Q${S.quizCurrent+1}/${total}</span>
-    ${S.quizMode==='errors'?'<span class="badge badge-gray">Errors mode</span>':''}
+  return`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+    <span class="tag">${mod?.label||''}&nbsp;&nbsp;${S.qi+1}/${tot}</span>
+    ${S.qmode==='errors'?'<span class="badge b-gray">Errors mode</span>':''}
   </div>
-  <div class="prog"><div class="prog-f" style="width:${(S.quizCurrent/total)*100}%"></div></div>
+  <div class="pbar" style="margin-bottom:1.25rem"><div class="pbar-f" style="width:${(S.qi/tot)*100}%"></div></div>
   <div class="card">
     ${q.passage?`<div class="passage">${q.passage}</div>`:''}
-    <p class="qtext">${q.question||''}</p>
+    <p style="font-size:15px;line-height:1.7;margin-bottom:14px;color:#e2e8f0">${q.question||''}</p>
     <div id="opts">${opts}</div>
-    ${rev&&q.explanation?`<div class="expl"><strong>Why:</strong> ${q.explanation}</div>`:''}
+    ${rev&&q.explanation?`<div style="padding:10px 14px;background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);border-radius:10px;margin-top:10px;font-size:13px;color:#c4b5fd;line-height:1.6"><strong>Why:</strong> ${q.explanation}</div>`:''}
     <div class="nav-row">
-      ${S.quizCurrent>0?`<button class="btn btn-sm" id="prevbtn">\u2190 Prev</button>`:''}
-      ${sel&&!rev?`<button class="btn btn-sm" id="checkbtn">\u2713 Check</button>`:''}
-      ${rev?`<button class="btn btn-sm btn-p" id="nextbtn">${isLast?'See results':'Next \u2192'}</button>`:''}
-      ${!sel&&!rev?`<button class="btn btn-sm" id="skipbtn">Skip \u2192</button>`:''}
-      <button class="btn btn-sm" id="quitbtn" style="margin-left:auto;color:#888">Quit</button>
-    </div></div>`;}
-
-function results(){
-  const test=S.tests.find(t=>t.id===S.activeTestId);
-  const mod=MODS.find(m=>m.id===S.activeModId);
-  const modDbId=test?.modules[S.activeModId]?.id;
-  const atts=modDbId?(S.userAttempts[modDbId]||[]):[];
-  let correct=0;S.quizQs.forEach((q,i)=>{if(S.quizAnswers[i]===q.answer)correct++;});
-  const total=S.quizQs.length,p=pct(correct,total);
-  const prev=atts.length>=2?atts[atts.length-2]:null;
-  const diff=prev?p-pct(prev.score,prev.total):null;
-  let wrong='';
-  S.quizQs.forEach((q,i)=>{
-    const a=S.quizAnswers[i],ok=a===q.answer;
-    if(!ok) wrong+=`<div class="rr"><span style="color:#A32D2D;min-width:16px">\u2717</span><span style="color:#888;min-width:28px">Q${i+1}</span><span style="flex:1">${(q.question||'').substring(0,55)}${(q.question||'').length>55?'\u2026':''}</span><span style="color:#888;white-space:nowrap">You:<b>${a||'\u2014'}</b> Ans:<b style="color:#3B6D11">${q.answer}</b></span></div>`;
-  });
-  const errCnt=total-correct;
-  return`<div style="text-align:center;padding:2rem 0 1.25rem">
-    <p class="muted" style="margin-bottom:4px">${mod?.label||''} ${S.quizMode==='errors'?'\u00b7 Errors practice':''}</p>
-    <div class="score-big">${correct}/${total}</div>
-    <p style="font-size:16px;color:#666;margin-top:4px">${p}%${diff!==null?` <span style="font-size:13px;color:${diff>=0?'#3B6D11':'#A32D2D'}">&nbsp;${diff>=0?'+':''}${diff}% vs last</span>`:''}
-    </p></div>
-  ${errCnt>0?`<div class="card" style="margin-bottom:1rem"><h3 style="margin-bottom:.5rem">Wrong (${errCnt})</h3>${wrong}</div>`:'<div class="card" style="margin-bottom:1rem;text-align:center;padding:1rem"><p style="color:#3B6D11">\u2713 Perfect!</p></div>'}
-  <div style="display:flex;gap:8px;flex-wrap:wrap">
-    <button class="btn btn-p btn-sm" id="retrybtn">Retry full</button>
-    ${errCnt>0?`<button class="btn btn-red btn-sm" id="errorsbtn">Practice ${errCnt} errors</button>`:''}
-    <button class="btn btn-sm" id="testbackbtn">\u2190 Back to test</button>
+      ${S.qi>0?`<button class="btn btn-g btn-sm" id="pbtn">\u2190 Prev</button>`:''}
+      ${sel&&!rev?`<button class="btn btn-teal btn-sm" id="chk">\u2713 Check</button>`:''}
+      ${rev?`<button class="btn btn-p btn-sm" id="nxt">${isLast?'See results':'Next \u2192'}</button>`:''}
+      ${!sel&&!rev?`<button class="btn btn-g btn-sm" id="skp">Skip \u2192</button>`:''}
+      <button class="btn btn-sm" id="quit" style="margin-left:auto;color:#475569;background:none;border:none;padding:5px 8px">Quit</button>
+    </div>
   </div>`;}
 
+function resSc(){
+  const test=S.tests.find(t=>t.id===S.activeT);
+  const mod=MODS.find(m=>m.id===S.activeMod);
+  const modData=test?.modules[S.activeMod];
+  let correct=0;S.qqs.forEach((q,i)=>{if(S.qans[i]===q.answer)correct++;});
+  const tot=S.qqs.length,p=pct(correct,tot);
+  const atts=modData?(S.ua[modData.id]||[]).filter(a=>a.mode==='full'):[];
+  const prev=atts.length>=2?atts[atts.length-2]:null;
+  const diff=prev?p-pct(prev.score,prev.total):null;
+  const col=p>=80?'#6ee7b7':p>=60?'#fcd34d':'#fca5a5';
+  const errCnt=tot-correct;
+  let wrongs='';
+  S.qqs.forEach((q,i)=>{
+    const a=S.qans[i],ok=a===q.answer;
+    if(!ok)wrongs+=`<div class="wrong-card">
+      <div style="display:flex;gap:6px;margin-bottom:4px;align-items:center">
+        <span style="color:#fca5a5;font-weight:600">Q${i+1}</span>
+        <span style="font-size:12px;color:#475569">You: <strong style="color:#fca5a5">${a||'—'}</strong>&nbsp;&nbsp;Answer: <strong style="color:#6ee7b7">${q.answer}</strong></span>
+      </div>
+      <div style="color:#94a3b8;font-size:13px;margin-bottom:3px">${(q.question||'').substring(0,80)}&hellip;</div>
+      ${q.explanation?`<div style="font-size:12px;color:#64748b">${q.explanation}</div>`:''}
+    </div>`;
+  });
+  return`<button class="back" id="tbk">\u2190 Back to test</button>
+  <div style="text-align:center;padding:2rem 0 1.5rem">
+    <p style="color:#64748b;font-size:13px;margin-bottom:.5rem">${mod?.label||''} ${S.qmode==='errors'?'\u00b7 Errors practice':''}</p>
+    <div class="score-big score-anim" id="sc" style="color:${col}">—</div>
+    <div style="font-size:18px;color:#475569;margin-top:.25rem" id="totlbl">/${tot}</div>
+    <p style="font-size:18px;margin-top:.5rem" style="color:${col}">${p}%${diff!==null?` <span style="font-size:14px;color:${diff>=0?'#6ee7b7':'#fca5a5'}">${diff>=0?'+':''}${diff}% vs last</span>`:''}</p>
+  </div>
+  ${errCnt===0?`<div class="card" style="text-align:center;padding:1.5rem;margin-bottom:1rem;border-color:rgba(16,185,129,.25)">
+    <div style="font-size:28px;margin-bottom:.4rem">\ud83c\udf89</div><p style="color:#6ee7b7;font-size:15px">Perfect score!</p></div>`
+  :`<div class="card" style="margin-bottom:1rem"><div style="font-size:11px;color:#475569;letter-spacing:.05em;margin-bottom:.75rem">WRONG ANSWERS (${errCnt})</div>${wrongs}</div>`}
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn btn-p btn-sm" id="retry">Retry full</button>
+    ${errCnt>0?`<button class="btn btn-r btn-sm" id="doerr">Practice ${errCnt} errors</button>`:''}
+    <button class="btn btn-g btn-sm" id="tbk2">\u2190 Back to test</button>
+  </div>`;}
+
+function animateScore(){
+  const el=document.getElementById('sc');if(!el)return;
+  let correct=0;S.qqs.forEach((q,i)=>{if(S.qans[i]===q.answer)correct++;});
+  let cur=0;const step=()=>{cur=Math.min(cur+Math.ceil(correct/20),correct);el.textContent=cur;if(cur<correct)requestAnimationFrame(step);};
+  requestAnimationFrame(step);
+}
+
+// ── EVENT BINDING ─────────────────────────────────────
 function bind(){
   const on=(id,fn)=>{const e=document.getElementById(id);if(e)e.onclick=fn;};
-  const ei=document.getElementById('emailinp');if(ei)ei.oninput=e=>S.authEmail=e.target.value;
-  on('backbtn',()=>{S.authSent=false;r();});
-  on('googlebtn',async()=>{const{error}=await db.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.href}});if(error){S.err=error.message;r();}});
-  on('magicbtn',async()=>{
-    if(!S.authEmail){S.err='Enter email.';r();return;}
-    const{error}=await db.auth.signInWithOtp({email:S.authEmail,options:{emailRedirectTo:location.href}});
+  // Auth
+  const ei=document.getElementById('ei');if(ei)ei.oninput=e=>S.ae=e.target.value;
+  on('abk',()=>{S.as=false;r();});
+  on('gbtn',async()=>{const{error}=await db.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.href}});if(error){S.err=error.message;r();}});
+  on('mbtn',async()=>{
+    if(!S.ae){S.err='Enter email.';r();return;}
+    const{error}=await db.auth.signInWithOtp({email:S.ae,options:{emailRedirectTo:location.href}});
     if(error){S.err=error.message;r();return;}
-    S.authSent=true;S.err='';r();
+    S.as=true;S.err='';r();
   });
-  on('signoutbtn',async()=>{await db.auth.signOut();S.stage='auth';S.user=null;S.tests=[];S.userAttempts={};r();});
-  on('homebtn',()=>{S.stage='home';S.err='';r();});
-  on('testbackbtn',()=>{S.stage='test';S.err='';r();});
-  document.querySelectorAll('.test-row').forEach(el=>el.onclick=()=>{S.activeTestId=el.dataset.tid;S.stage='test';r();});
-  document.querySelectorAll('[data-practice]').forEach(el=>el.onclick=e=>{
+  // Home
+  on('sout',async()=>{await db.auth.signOut();S.stage='auth';S.user=null;S.tests=[];S.ua={};r();});
+  on('tab-tests',()=>{S.tab='tests';r();});
+  on('tab-analytics',()=>{S.tab='analytics';r();});
+  document.querySelectorAll('.tcard').forEach(el=>el.onclick=()=>{S.activeT=el.dataset.tid;S.stage='test';r();});
+  // Test
+  on('hbtn',()=>{S.stage='home';r();});
+  document.querySelectorAll('[data-pr]').forEach(el=>el.onclick=e=>{
     e.stopPropagation();
-    const modId=el.dataset.practice,mode=el.dataset.mode;
-    const test=S.tests.find(t=>t.id===S.activeTestId);
-    const mod=test?.modules[modId];if(!mod?.questions?.length) return;
+    const mi=el.dataset.pr,mo=el.dataset.mo;
+    const test=S.tests.find(t=>t.id===S.activeT);const mod=test?.modules[mi];
+    if(!mod?.questions?.length)return;
     let qs=[...mod.questions];
-    if(mode==='errors'){
-      const atts=S.userAttempts[mod.id]||[];
-      const last=atts[atts.length-1];
-      if(last) qs=qs.filter((_,i)=>last.answers[String(i)]!==qs[i].answer);
-      if(!qs.length) return;
+    if(mo==='errors'){
+      const atts=(S.ua[mod.id]||[]).filter(a=>a.mode==='full');
+      const last=atts.slice(-1)[0];
+      if(last)qs=qs.filter((_,i)=>last.answers[String(i)]!==qs[i].answer);
+      if(!qs.length)return;
     }
-    S.activeModId=modId;S.quizQs=qs;S.quizMode=mode;S.quizModDbId=mod.id;
-    S.quizCurrent=0;S.quizAnswers={};S.quizRevealed={};S.quizSaved=false;
-    S.stage='quiz';r();
+    S.activeMod=mi;S.qqs=qs;S.qmode=mo;S.qmodDbId=mod.id;
+    S.qi=0;S.qans={};S.qrev={};S.qsaved=false;S.stage='quiz';r();
   });
-  on('prevbtn',()=>{S.quizCurrent--;r();});
-  on('checkbtn',()=>{S.quizRevealed[S.quizCurrent]=true;r();});
-  on('nextbtn',async()=>{
-    if(S.quizCurrent===S.quizQs.length-1){await finishQuiz();S.stage='results';r();}
-    else{S.quizCurrent++;r();}
+  // Quiz
+  on('pbtn',()=>{S.qi--;r();});
+  on('chk',()=>{S.qrev[S.qi]=true;r();});
+  on('nxt',async()=>{
+    if(S.qi===S.qqs.length-1){await finishQ();S.stage='results';r();}
+    else{S.qi++;r();}
   });
-  on('skipbtn',async()=>{
-    if(S.quizCurrent===S.quizQs.length-1){await finishQuiz();S.stage='results';r();}
-    else{S.quizCurrent++;r();}
+  on('skp',async()=>{
+    if(S.qi===S.qqs.length-1){await finishQ();S.stage='results';r();}
+    else{S.qi++;r();}
   });
-  on('quitbtn',()=>{if(confirm('Quit?')){S.stage='test';r();}});
-  document.querySelectorAll('.opt').forEach(el=>el.onclick=()=>{if(!S.quizRevealed[S.quizCurrent]){S.quizAnswers[S.quizCurrent]=el.dataset.opt;r();}});
-  on('retrybtn',()=>{
-    const mod=S.tests.find(t=>t.id===S.activeTestId)?.modules[S.activeModId];if(!mod)return;
-    S.quizQs=[...mod.questions];S.quizMode='full';S.quizModDbId=mod.id;
-    S.quizCurrent=0;S.quizAnswers={};S.quizRevealed={};S.quizSaved=false;S.stage='quiz';r();
+  on('quit',()=>{if(confirm('Quit? Progress won\'t be saved.')){S.stage='test';r();}});
+  document.querySelectorAll('[data-op]').forEach(el=>el.onclick=()=>{if(!S.qrev[S.qi]){S.qans[S.qi]=el.dataset.op;r();}});
+  // Results
+  const goTest=()=>{S.stage='test';r();};
+  on('tbk',goTest);on('tbk2',goTest);
+  on('retry',()=>{
+    const mod=S.tests.find(t=>t.id===S.activeT)?.modules[S.activeMod];if(!mod)return;
+    S.qqs=[...mod.questions];S.qmode='full';S.qmodDbId=mod.id;
+    S.qi=0;S.qans={};S.qrev={};S.qsaved=false;S.stage='quiz';r();
   });
-  on('errorsbtn',()=>{
-    const mod=S.tests.find(t=>t.id===S.activeTestId)?.modules[S.activeModId];if(!mod)return;
-    const atts=S.userAttempts[mod.id]||[];const last=atts[atts.length-1];
+  on('doerr',()=>{
+    const mod=S.tests.find(t=>t.id===S.activeT)?.modules[S.activeMod];if(!mod)return;
+    const atts=(S.ua[mod.id]||[]).filter(a=>a.mode==='full');const last=atts.slice(-1)[0];
     const qs=mod.questions.filter((_,i)=>last?.answers[String(i)]!==mod.questions[i].answer);
     if(!qs.length)return;
-    S.quizQs=qs;S.quizMode='errors';S.quizModDbId=mod.id;
-    S.quizCurrent=0;S.quizAnswers={};S.quizRevealed={};S.quizSaved=false;S.stage='quiz';r();
+    S.qqs=qs;S.qmode='errors';S.qmodDbId=mod.id;
+    S.qi=0;S.qans={};S.qrev={};S.qsaved=false;S.stage='quiz';r();
   });
 }
 
-async function finishQuiz(){
-  if(S.quizSaved||!S.quizModDbId) return;
-  const score=S.quizQs.filter((q,i)=>S.quizAnswers[i]===q.answer).length;
-  const answers={};Object.entries(S.quizAnswers).forEach(([k,v])=>answers[String(k)]=v);
-  const{data,error}=await db.from('user_attempts').insert({
-    module_id:S.quizModDbId,user_id:S.user.id,
-    answers,score,total:S.quizQs.length,mode:S.quizMode
-  }).select().single();
+async function finishQ(){
+  if(S.qsaved||!S.qmodDbId)return;
+  const score=S.qqs.filter((q,i)=>S.qans[i]===q.answer).length;
+  const ans={};Object.entries(S.qans).forEach(([k,v])=>ans[String(k)]=v);
+  const{data,error}=await db.from('user_attempts').insert({module_id:S.qmodDbId,user_id:S.user.id,answers:ans,score,total:S.qqs.length,mode:S.qmode}).select().single();
   if(!error&&data){
-    if(!S.userAttempts[S.quizModDbId]) S.userAttempts[S.quizModDbId]=[];
-    S.userAttempts[S.quizModDbId].push({id:data.id,date:data.created_at,answers,score,total:S.quizQs.length,mode:S.quizMode});
+    if(!S.ua[S.qmodDbId])S.ua[S.qmodDbId]=[];
+    S.ua[S.qmodDbId].push({id:data.id,date:data.created_at,answers:ans,score,total:S.qqs.length,mode:S.qmode});
   }
-  S.quizSaved=true;
+  S.qsaved=true;
 }
 
 async function loadData(){
   S.stage='loading';r();
-  // Load all public tests + modules (questions included)
-  const{data:tests,error:te}=await db.from('tests')
-    .select('id,name,date,source,modules(id,module_type,questions)')
-    .order('date',{ascending:false});
-  if(te){S.err=te.message;S.stage='home';r();return;}
-
-  // Load this user's attempts
-  const{data:atts}=await db.from('user_attempts')
-    .select('id,module_id,answers,score,total,mode,created_at')
-    .order('created_at',{ascending:true});
-
-  // Index attempts by module_id
-  S.userAttempts={};
-  (atts||[]).forEach(a=>{
-    if(!S.userAttempts[a.module_id]) S.userAttempts[a.module_id]=[];
-    S.userAttempts[a.module_id].push({id:a.id,date:a.created_at,answers:a.answers,score:a.score,total:a.total,mode:a.mode});
-  });
-
-  // Transform tests into expected format
-  S.tests=(tests||[]).map(t=>({
-    id:t.id,name:t.name,date:t.date,source:t.source,
-    modules:Object.fromEntries((t.modules||[]).map(m=>[m.module_type,{id:m.id,questions:m.questions||[]}]))
-  }));
-
+  const{data:tests}=await db.from('tests').select('id,name,date,source,modules(id,module_type,questions)').order('date',{ascending:false});
+  const{data:atts}=await db.from('user_attempts').select('id,module_id,answers,score,total,mode,created_at').order('created_at',{ascending:true});
+  S.ua={};(atts||[]).forEach(a=>{if(!S.ua[a.module_id])S.ua[a.module_id]=[];S.ua[a.module_id].push({id:a.id,date:a.created_at,answers:a.answers,score:a.score,total:a.total,mode:a.mode});});
+  S.tests=(tests||[]).map(t=>({id:t.id,name:t.name,date:t.date,source:t.source,modules:Object.fromEntries((t.modules||[]).map(m=>[m.module_type,{id:m.id,questions:m.questions||[]}]))}));
   S.stage='home';r();
 }
 
-// Auth init
-db.auth.onAuthStateChange(async(event,session)=>{
-  if(event==='SIGNED_OUT'){S.user=null;S.tests=[];S.userAttempts={};S.stage='auth';r();return;}
-  if(session&&(S.stage==='loading'||S.stage==='auth')){S.user=session.user;await loadData();}
+db.auth.onAuthStateChange(async(ev,sess)=>{
+  if(ev==='SIGNED_OUT'){S.user=null;S.tests=[];S.ua={};S.stage='auth';r();return;}
+  if(sess&&(S.stage==='loading'||S.stage==='auth')){S.user=sess.user;await loadData();}
 });
 db.auth.getSession().then(async({data:{session}})=>{
-  if(S.stage!=='loading') return;
+  if(S.stage!=='loading')return;
   if(session){S.user=session.user;await loadData();}
   else{S.stage='auth';r();}
 });
