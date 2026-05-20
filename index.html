@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SAT Practice</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f3;color:#1a1a1a;min-height:100vh}
+.wrap{max-width:740px;margin:0 auto;padding:2rem 1rem}
+h1{font-size:22px;font-weight:500}h2{font-size:18px;font-weight:500}h3{font-size:15px;font-weight:500}
+.muted{color:#888;font-size:13px}
+.card{background:#fff;border:1px solid #e5e5e3;border-radius:12px;padding:1.25rem;margin-bottom:.75rem}
+.fl{font-size:11px;font-weight:500;color:#888;letter-spacing:.05em;display:block;margin-bottom:5px}
+input[type=text],input[type=email],input[type=password],input[type=date],select{width:100%;padding:8px 11px;border:1px solid #ddd;border-radius:8px;font-size:13px;font-family:inherit;background:#fafaf9;color:#1a1a1a}
+input:focus,select:focus{outline:none;border-color:#999}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border:1px solid #ccc;border-radius:8px;background:transparent;font-size:13px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.btn:hover{background:#f0f0ee}.btn:active{transform:scale(.98)}
+.btn-p{background:#1a1a1a;color:#fff;border-color:#1a1a1a}.btn-p:hover{background:#333}
+.btn-sm{padding:5px 11px;font-size:12px}
+.btn-red{border-color:#f0b4b4;color:#A32D2D;background:#FCEBEB}.btn-red:hover{background:#f8dada}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.mc{background:#fff;border:1px solid #e5e5e3;border-radius:12px;padding:1rem;display:flex;flex-direction:column;gap:7px}
+.mc.empty{background:#fafaf9}.mc.ready{border-color:#c5dab5}
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;font-weight:500}
+.badge-rw{background:#e8f0fe;color:#1a56b0}.badge-math{background:#fef3e2;color:#92400e}
+.badge-green{background:#EAF3DE;color:#3B6D11}.badge-gray{background:#f0f0ee;color:#666}
+.passage{background:#f9f9f7;border-left:3px solid #ddd;padding:10px 14px;border-radius:0 8px 8px 0;font-size:13px;color:#555;margin-bottom:12px;line-height:1.7;white-space:pre-wrap}
+.qtext{font-size:15px;margin-bottom:12px;line-height:1.6}
+.opt{display:flex;align-items:flex-start;gap:9px;padding:10px 12px;border:1px solid #e5e5e3;border-radius:8px;cursor:pointer;margin-bottom:7px;transition:border-color .1s,background .1s}
+.opt:hover{border-color:#bbb;background:#fafaf9}.opt.sel{border-color:#999;background:#f5f5f3}
+.opt.ok{border-color:#3B6D11;background:#EAF3DE}.opt.ok .lt{border-color:#3B6D11;color:#3B6D11}
+.opt.bad{border-color:#A32D2D;background:#FCEBEB}.opt.bad .lt{border-color:#A32D2D;color:#A32D2D}
+.lt{width:24px;height:24px;min-width:24px;border:1px solid #ccc;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500}
+.ot{font-size:13px;line-height:1.6;padding-top:2px}
+.expl{font-size:13px;color:#555;padding:9px 13px;background:#f5f5f3;border-radius:8px;margin-top:10px;line-height:1.6}
+.prog{height:3px;background:#e5e5e3;border-radius:2px;margin-bottom:1.25rem}
+.prog-f{height:100%;background:#1a1a1a;border-radius:2px;transition:width .3s}
+.tag{font-size:11px;padding:2px 9px;border-radius:6px;background:#f0f0ee;color:#666;border:1px solid #e5e5e3}
+.nav-row{display:flex;gap:7px;margin-top:14px;flex-wrap:wrap;align-items:center}
+.score-big{font-size:52px;font-weight:500}
+.rr{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid #f0f0ee;font-size:12px}
+.ld{width:26px;height:26px;border:2px solid #e5e5e3;border-top-color:#1a1a1a;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.err{font-size:13px;color:#A32D2D;padding:9px 13px;background:#FCEBEB;border-radius:8px;margin-bottom:.75rem;line-height:1.5}
+.ok-msg{font-size:13px;color:#3B6D11;padding:9px 13px;background:#EAF3DE;border-radius:8px;margin-bottom:.75rem}
+.hint{font-size:12px;color:#888;margin-top:5px;line-height:1.5}
+.pbar-w{background:#f0f0ee;border-radius:6px;overflow:hidden;margin-top:6px}
+.pbar{height:5px;background:#1a1a1a;border-radius:6px;transition:width .3s}
+.back{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:#888;cursor:pointer;margin-bottom:1.25rem;border:none;background:none;font-family:inherit;padding:0}
+.back:hover{color:#1a1a1a}
+.test-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #f5f5f3;cursor:pointer}
+.test-row:last-child{border-bottom:none}
+.test-row:hover .tn{text-decoration:underline}
+.tn{font-size:15px;font-weight:500;flex:1}
+.ul-lbl{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border:1px solid #ddd;border-radius:8px;cursor:pointer;font-size:13px;background:#fafaf9}
+.ul-lbl:hover{background:#f0f0ee}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.atrow{display:flex;gap:5px;flex-wrap:wrap;margin-top:3px;align-items:center}
+</style>
+</head>
+<body>
+<div class="wrap"><div id="app"></div></div>
+
+<!-- Supabase CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- PDF.js CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+// ── CONFIG — fill these in ──────────────────────────
+const SUPABASE_URL  = '';   // https://xxxx.supabase.co
+const SUPABASE_ANON = '';   // your anon/public key
+// ────────────────────────────────────────────────────
+
+if(typeof pdfjsLib!=='undefined')
+  pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+const MODS=[
+  {id:'RW1',  label:'R&W \u2014 Module 1',subject:'rw'},
+  {id:'RW2',  label:'R&W \u2014 Module 2',subject:'rw'},
+  {id:'Math1',label:'Math \u2014 Module 1',subject:'math'},
+  {id:'Math2',label:'Math \u2014 Module 2',subject:'math'},
+];
+
+const fmtDate=d=>d?new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'';
+const pct=(s,t)=>t?Math.round(s/t*100):0;
+
+const S={
+  stage:'loading',
+  tests:[],user:null,
+  activeTestId:null,activeModId:null,
+  showNewTest:false,newName:'',newDate:new Date().toISOString().slice(0,10),
+  uploadFile:null,uploadProg:'',uploadPct:0,
+  quizQs:[],quizCurrent:0,quizAnswers:{},quizRevealed:{},
+  quizMode:'full',quizModDbId:null,quizSaved:false,
+  apiKey:localStorage.getItem('groq_key')||'',
+  model:localStorage.getItem('groq_model')||'meta-llama/llama-4-scout-17b-16e-instruct',
+  showKey:false,showSettings:false,
+  error:'',okMsg:'',
+  authEmail:'',authSent:false,
+};
+
+// ── DATA TRANSFORMS ───────────────────────────────────
+function xTests(raw){
+  return (raw||[]).map(t=>({
+    id:t.id,name:t.name,date:t.date,
+    modules:{
+      RW1:  xMod(t.modules?.find(m=>m.module_type==='RW1')),
+      RW2:  xMod(t.modules?.find(m=>m.module_type==='RW2')),
+      Math1:xMod(t.modules?.find(m=>m.module_type==='Math1')),
+      Math2:xMod(t.modules?.find(m=>m.module_type==='Math2')),
+    }
+  }));
+}
+function xMod(m){
+  if(!m) return null;
+  return{
+    id:m.id,questions:m.questions||[],uploadedAt:m.uploaded_at,
+    attempts:(m.attempts||[])
+      .sort((a,b)=>new Date(a.created_at)-new Date(b.created_at))
+      .map(a=>({id:a.id,date:a.created_at,answers:a.answers,score:a.score,total:a.total,mode:a.mode}))
+  };
+}
+
+// ── SUPABASE OPS ──────────────────────────────────────
+async function loadData(){
+  S.stage='loading';r();
+  const{data,error}=await db.from('tests')
+    .select('id,name,date,created_at,modules(id,module_type,questions,uploaded_at,attempts(id,answers,score,total,mode,created_at))')
+    .order('created_at',{ascending:false});
+  if(error){S.error=error.message;S.stage='home';r();return;}
+  S.tests=xTests(data);S.stage='home';r();
+}
+
+async function dbCreateTest(name,date){
+  const{data,error}=await db.from('tests').insert({name,date,user_id:S.user.id}).select().single();
+  if(error) throw error;
+  const t={id:data.id,name:data.name,date:data.date,modules:{RW1:null,RW2:null,Math1:null,Math2:null}};
+  S.tests.unshift(t);return t;
+}
+
+async function dbDeleteTest(id){
+  const{error}=await db.from('tests').delete().eq('id',id);
+  if(error) throw error;
+  S.tests=S.tests.filter(t=>t.id!==id);
+}
+
+async function dbSaveModule(testId,modType,questions){
+  const{data,error}=await db.from('modules')
+    .upsert({test_id:testId,module_type:modType,questions,uploaded_at:new Date().toISOString()},{onConflict:'test_id,module_type'})
+    .select().single();
+  if(error) throw error;
+  const test=S.tests.find(t=>t.id===testId);
+  if(test) test.modules[modType]={id:data.id,questions,uploadedAt:data.uploaded_at,attempts:test.modules[modType]?.attempts||[]};
+  return data;
+}
+
+async function dbSaveAttempt(modDbId,answers,score,total,mode){
+  const{data,error}=await db.from('attempts').insert({module_id:modDbId,user_id:S.user.id,answers,score,total,mode}).select().single();
+  if(error) throw error;
+  // update local
+  for(const t of S.tests){
+    for(const [k,m] of Object.entries(t.modules)){
+      if(m&&m.id===modDbId){
+        m.attempts.push({id:data.id,date:data.created_at,answers,score,total,mode});
+      }
+    }
+  }
+}
+
+// ── MIGRATE from localStorage ─────────────────────────
+async function migrateLocal(){
+  let local=[];
+  try{local=JSON.parse(localStorage.getItem('sat_tests')||'[]');}catch{}
+  if(!local.length){S.okMsg='No local data found.';r();return;}
+  S.okMsg='Migrating...';r();
+  let count=0;
+  for(const t of local){
+    try{
+      const newT=await dbCreateTest(t.name,t.date||new Date().toISOString().slice(0,10));
+      for(const[modType,mod] of Object.entries(t.modules||{})){
+        if(!mod?.questions?.length) continue;
+        await dbSaveModule(newT.id,modType,mod.questions);
+        for(const att of (mod.attempts||[])){
+          const m=S.tests.find(x=>x.id===newT.id)?.modules[modType];
+          if(m?.id) await dbSaveAttempt(m.id,att.answers||{},att.score||0,att.total||0,att.mode||'full');
+        }
+      }
+      count++;
+    }catch(e){console.warn('migrate err',e);}
+  }
+  S.okMsg=`Migrated ${count} test(s) successfully!`;r();
+}
+
+// ── RENDER ────────────────────────────────────────────
+function r(){
+  if(!SUPABASE_URL||!SUPABASE_ANON){document.getElementById('app').innerHTML=noConfig();bind();return;}
+  const fn={loading:loadingScreen,auth:authScreen,home,test:testScreen,upload:uploadScreen,uploading:uploadingScreen,quiz,results};
+  document.getElementById('app').innerHTML=(fn[S.stage]||loadingScreen)();
+  bind();
+}
+
+function noConfig(){return`<div style="padding:3rem 0;max-width:480px">
+  <h2 style="margin-bottom:.75rem">Setup required</h2>
+  <p style="font-size:14px;color:#555;line-height:1.7;margin-bottom:1rem">Open this HTML file in a text editor and fill in the two config values at the top:</p>
+  <pre style="background:#f0f0ee;padding:1rem;border-radius:8px;font-size:12px;line-height:1.8">const SUPABASE_URL  = 'https://xxxx.supabase.co';\nconst SUPABASE_ANON = 'your-anon-key';</pre>
+  <p style="font-size:13px;color:#888;margin-top:1rem">Find these in your Supabase project: Settings \u2192 API</p>
+</div>`;}
+
+function loadingScreen(){return`<div style="display:flex;flex-direction:column;align-items:center;padding:5rem 0;gap:14px"><div class="ld"></div><p class="muted">Loading...</p></div>`;}
+
+function authScreen(){
+  if(S.authSent) return`<div style="max-width:400px;margin:4rem auto">
+    <h2 style="margin-bottom:.5rem">Check your email</h2>
+    <p class="muted" style="margin-bottom:1.5rem">We sent a magic link to <strong>${S.authEmail}</strong>. Click it to sign in.</p>
+    <button class="btn btn-sm" id="backtologin">Use a different email</button>
+  </div>`;
+  return`<div style="max-width:400px;margin:4rem auto">
+    <h1 style="margin-bottom:.25rem">SAT Practice</h1>
+    <p class="muted" style="margin-bottom:2rem">Sign in to access your tests from any device.</p>
+    <div class="card">
+      <span class="fl">EMAIL</span>
+      <input type="email" id="emailinp" placeholder="you@example.com" value="${S.authEmail}" style="margin-bottom:.75rem"/>
+      ${S.error?`<div class="err" style="margin-bottom:.5rem">${S.error}</div>`:''}
+      <button class="btn btn-p" id="magicbtn" style="width:100%;justify-content:center">Send magic link</button>
+    </div>
+    <p class="hint" style="text-align:center">No password needed. We'll email you a sign-in link.</p>
+  </div>`;}
+
+function home(){
+  const hasLocal=()=>{try{return JSON.parse(localStorage.getItem('sat_tests')||'[]').length>0;}catch{return false;}};
+  const rows=S.tests.length?S.tests.map(t=>{
+    const filled=MODS.filter(m=>t.modules[m.id]?.questions?.length>0).length;
+    const atts=MODS.map(m=>t.modules[m.id]?.attempts?.slice(-1)[0]).filter(Boolean);
+    const avg=atts.length?Math.round(atts.reduce((a,x)=>a+pct(x.score,x.total),0)/atts.length)+'%':'—';
+    return`<div class="test-row" data-tid="${t.id}">
+      <div style="flex:1"><div class="tn">${t.name}</div>
+      <div class="muted" style="margin-top:2px">${fmtDate(t.date)}&nbsp;\u00b7&nbsp;${filled}/4 modules&nbsp;\u00b7&nbsp;avg ${avg}</div></div>
+      <span style="color:#bbb;font-size:18px">\u203a</span></div>`;
+  }).join(''):`<p class="muted" style="padding:1.5rem 0">No tests yet \u2014 create your first one.</p>`;
+
+  const newForm=S.showNewTest?`<div class="card" style="margin-top:.75rem">
+    <h3 style="margin-bottom:.75rem">New test</h3>
+    <div style="display:grid;grid-template-columns:1fr auto;gap:.5rem;margin-bottom:.5rem">
+      <div><span class="fl">TEST NAME</span><input type="text" id="nname" placeholder="e.g. May 2025 INT Test C" value="${S.newName}"/></div>
+      <div><span class="fl">DATE</span><input type="date" id="ndate" value="${S.newDate}" style="width:auto"/></div>
+    </div>
+    <div style="display:flex;gap:7px;margin-top:.5rem">
+      <button class="btn btn-p" id="createbtn">Create</button>
+      <button class="btn" id="cancelnew">Cancel</button>
+    </div>
+  </div>`:'';
+
+  const settingsForm=S.showSettings?`<div class="card" style="margin-top:.75rem">
+    <span class="fl">GROQ API KEY</span>
+    <div style="display:flex;gap:7px;align-items:center;margin-bottom:.5rem">
+      <input type="${S.showKey?'text':'password'}" id="apikey" placeholder="gsk_..." value="${S.apiKey}" style="flex:1"/>
+      <button class="btn btn-sm" id="togglekey">${S.showKey?'Hide':'Show'}</button>
+    </div>
+    <span class="fl">MODEL</span>
+    <select id="modelsel">
+      <option value="meta-llama/llama-4-scout-17b-16e-instruct" ${S.model.includes('scout')?'selected':''}>Llama 4 Scout</option>
+      <option value="meta-llama/llama-4-maverick-17b-128e-instruct" ${S.model.includes('maverick')?'selected':''}>Llama 4 Maverick</option>
+    </select>
+    <p class="hint" style="margin-top:.5rem">Free key at <a href="https://console.groq.com" target="_blank">console.groq.com</a></p>
+    <div class="divider" style="height:1px;background:#f0f0ee;margin:.75rem 0"></div>
+    <span class="fl">MIGRATE LOCAL DATA</span>
+    <p class="hint" style="margin-bottom:.5rem">If you used the offline version, import your tests here.</p>
+    <button class="btn btn-sm" id="migratebtn" ${!hasLocal()?'disabled':''}>Import from local storage</button>
+    <div class="divider" style="height:1px;background:#f0f0ee;margin:.75rem 0"></div>
+    <button class="btn btn-sm btn-red" id="signoutbtn">Sign out</button>
+  </div>`:'';
+
+  return`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
+    <div><h1>SAT Practice</h1><p class="muted" style="margin-top:2px">${S.user?.email||''}</p></div>
+    <div style="display:flex;gap:7px">
+      <button class="btn btn-sm" id="settingsbtn">\u2699 Settings</button>
+      <button class="btn btn-sm btn-p" id="newbtn">+ New test</button>
+    </div>
+  </div>
+  ${S.error?`<div class="err">${S.error}</div>`:''}
+  ${S.okMsg?`<div class="ok-msg">${S.okMsg}</div>`:''}
+  ${settingsForm}
+  <div class="card" style="padding:.5rem 1.25rem">${rows}</div>
+  ${newForm}`;}
+
+function testScreen(){
+  const test=S.tests.find(t=>t.id===S.activeTestId);
+  if(!test) return home();
+  const cards=MODS.map(m=>{
+    const mod=test.modules[m.id];
+    const hasQs=mod?.questions?.length>0;
+    const badge=`<span class="badge ${m.subject==='rw'?'badge-rw':'badge-math'}">${m.subject==='rw'?'R&W':'Math'}</span>`;
+    const lastA=mod?.attempts?.slice(-1)[0];
+    const errCnt=lastA?lastA.total-lastA.score:0;
+    if(!hasQs) return`<div class="mc empty">${badge}<h3 style="font-size:13px">${m.label}</h3>
+      <p class="muted" style="font-size:12px">Not uploaded</p>
+      <button class="btn btn-sm" data-upload="${m.id}">\u2191 Upload PDF</button></div>`;
+    const dots=mod.attempts.slice(-6).map(a=>{const p=pct(a.score,a.total);return`<span class="dot" style="background:${p>=80?'#3B6D11':p>=60?'#92400e':'#A32D2D'}" title="${a.score}/${a.total}"></span>`;}).join('');
+    return`<div class="mc ready">${badge}<h3 style="font-size:13px">${m.label}</h3>
+      <p class="muted" style="font-size:12px">${mod.questions.length} questions</p>
+      ${lastA?`<p style="font-size:13px">Last: <strong>${lastA.score}/${lastA.total}</strong> <span class="muted">(${pct(lastA.score,lastA.total)}%)</span></p>`:'<p class="muted" style="font-size:12px">Not attempted</p>'}
+      ${mod.attempts.length>1?`<div class="atrow">${dots}<span class="muted" style="font-size:11px">${mod.attempts.length} attempts</span></div>`:''}
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:3px">
+        <button class="btn btn-sm btn-p" data-practice="${m.id}" data-mode="full">Practice</button>
+        ${errCnt>0?`<button class="btn btn-sm btn-red" data-practice="${m.id}" data-mode="errors">Errors (${errCnt})</button>`:''}
+        <button class="btn btn-sm" data-upload="${m.id}" title="Re-upload">\u2191</button>
+      </div></div>`;
+  });
+  const tot=MODS.reduce((a,m)=>{const l=test.modules[m.id]?.attempts?.slice(-1)[0];if(l){a.s+=l.score;a.t+=l.total;}return a;},{s:0,t:0});
+  return`<button class="back" id="homebtn">\u2190 All tests</button>
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.5rem">
+    <div><h2>${test.name}</h2><p class="muted">${fmtDate(test.date)}</p></div>
+    ${tot.t>0?`<div style="text-align:right"><p style="font-size:22px;font-weight:500">${tot.s}/${tot.t}</p><p class="muted">${pct(tot.s,tot.t)}% overall</p></div>`:''}
+  </div>
+  ${S.error?`<div class="err">${S.error}</div>`:''}
+  <p class="muted" style="font-size:12px;margin-bottom:.4rem">READING &amp; WRITING</p>
+  <div class="grid2" style="margin-bottom:1rem">${cards[0]}${cards[1]}</div>
+  <p class="muted" style="font-size:12px;margin-bottom:.4rem">MATH</p>
+  <div class="grid2" style="margin-bottom:1.5rem">${cards[2]}${cards[3]}</div>
+  <button class="btn btn-sm btn-red" id="delbtn">Delete test</button>`;}
+
+function uploadScreen(){
+  const mod=MODS.find(m=>m.id===S.activeModId);
+  return`<button class="back" id="testbackbtn">\u2190 Back to test</button>
+  <h2 style="margin-bottom:.25rem">Upload PDF</h2>
+  <p class="muted" style="margin-bottom:1.25rem">Module: <strong>${mod?.label||''}</strong></p>
+  ${!S.apiKey?`<div class="card"><span class="fl">GROQ API KEY REQUIRED</span>
+    <div style="display:flex;gap:7px;align-items:center"><input type="${S.showKey?'text':'password'}" id="apikey" placeholder="gsk_..." style="flex:1"/>
+    <button class="btn btn-sm" id="togglekey">${S.showKey?'Hide':'Show'}</button></div>
+    <p class="hint">Free at <a href="https://console.groq.com" target="_blank">console.groq.com</a></p></div>`:''}
+  <div class="card"><span class="fl">PDF FILE</span>
+    <label class="ul-lbl">\u2191&nbsp;${S.uploadFile?S.uploadFile.name:'Choose PDF'}
+      <input type="file" id="filein" accept=".pdf" style="display:none"/></label>
+    <p class="hint">Upload just this module's PDF.</p></div>
+  ${S.error?`<div class="err">${S.error}</div>`:''}
+  <button class="btn btn-p" id="extractbtn" ${(!S.uploadFile||!S.apiKey)?'disabled':''}>&#9658;&nbsp;Extract questions</button>`;}
+
+function uploadingScreen(){
+  return`<div style="display:flex;flex-direction:column;align-items:center;padding:4rem 0;gap:14px">
+    <div class="ld"></div>
+    <p style="font-size:14px;color:#666" id="loadmsg">${S.uploadProg||'Preparing...'}</p>
+    <div style="width:260px"><div class="pbar-w"><div class="pbar" id="pbar" style="width:${S.uploadPct}%"></div></div></div>
+    <p class="muted">Large PDFs take 1\u20133 min</p></div>`;}
+
+function quiz(){
+  const q=S.quizQs[S.quizCurrent];if(!q) return'';
+  const total=S.quizQs.length,sel=S.quizAnswers[S.quizCurrent],rev=S.quizRevealed[S.quizCurrent];
+  let opts='';
+  ['A','B','C','D'].forEach(l=>{
+    if(!q.options?.[l]) return;
+    let c='opt';if(sel===l&&!rev)c+=' sel';
+    if(rev){if(l===q.answer)c+=' ok';else if(sel===l)c+=' bad';}
+    opts+=`<div class="${c}" data-opt="${l}"><div class="lt">${l}</div><div class="ot">${q.options[l]}</div></div>`;
+  });
+  const mod=MODS.find(m=>m.id===S.activeModId);const isLast=S.quizCurrent===total-1;
+  return`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <span class="tag">${mod?.label||''}&nbsp;\u00b7&nbsp;Q${S.quizCurrent+1}/${total}</span>
+    ${S.quizMode==='errors'?'<span class="badge badge-gray">Errors mode</span>':''}
+  </div>
+  <div class="prog"><div class="prog-f" style="width:${(S.quizCurrent/total)*100}%"></div></div>
+  <div class="card">
+    ${q.passage?`<div class="passage">${q.passage}</div>`:''}
+    <p class="qtext">${q.question||''}</p>
+    <div id="opts">${opts}</div>
+    ${rev&&q.explanation?`<div class="expl"><strong>Why:</strong> ${q.explanation}</div>`:''}
+    <div class="nav-row">
+      ${S.quizCurrent>0?`<button class="btn btn-sm" id="prevbtn">\u2190 Prev</button>`:''}
+      ${sel&&!rev?`<button class="btn btn-sm" id="checkbtn">\u2713 Check</button>`:''}
+      ${rev?`<button class="btn btn-sm btn-p" id="nextbtn">${isLast?'See results':'Next \u2192'}</button>`:''}
+      ${!sel&&!rev?`<button class="btn btn-sm" id="skipbtn">Skip \u2192</button>`:''}
+      <button class="btn btn-sm" id="quitbtn" style="margin-left:auto;color:#888">Quit</button>
+    </div></div>`;}
+
+function results(){
+  const test=S.tests.find(t=>t.id===S.activeTestId);
+  const mod=MODS.find(m=>m.id===S.activeModId);
+  const modData=test?.modules[S.activeModId];
+  const qs=S.quizQs;
+  let correct=0;qs.forEach((q,i)=>{if(S.quizAnswers[i]===q.answer)correct++;});
+  const total=qs.length,p=pct(correct,total);
+  const attempts=modData?.attempts||[];
+  const prev=attempts.length>=2?attempts[attempts.length-2]:null;
+  const diff=prev?p-pct(prev.score,prev.total):null;
+  let wrong='';
+  qs.forEach((q,i)=>{
+    const a=S.quizAnswers[i],ok=a===q.answer;
+    if(!ok) wrong+=`<div class="rr"><span style="color:#A32D2D;min-width:16px">\u2717</span><span style="color:#888;min-width:28px">Q${i+1}</span><span style="flex:1">${(q.question||'').substring(0,55)}${(q.question||'').length>55?'\u2026':''}</span><span style="color:#888;white-space:nowrap">You:<b>${a||'\u2014'}</b> Ans:<b style="color:#3B6D11">${q.answer}</b></span></div>`;
+  });
+  const errCnt=total-correct;
+  return`<div style="text-align:center;padding:2rem 0 1.25rem">
+    <p class="muted" style="margin-bottom:4px">${mod?.label||''} ${S.quizMode==='errors'?'\u00b7 Errors practice':''}</p>
+    <div class="score-big">${correct}/${total}</div>
+    <p style="font-size:16px;color:#666;margin-top:4px">${p}%${diff!==null?` <span style="font-size:13px;color:${diff>=0?'#3B6D11':'#A32D2D'}">&nbsp;${diff>=0?'+':''}${diff}% vs last</span>`:''}
+    </p></div>
+  ${errCnt>0?`<div class="card" style="margin-bottom:1rem"><h3 style="margin-bottom:.5rem">Wrong (${errCnt})</h3>${wrong}</div>`:'<div class="card" style="margin-bottom:1rem;text-align:center;padding:1rem"><p style="color:#3B6D11">\u2713 Perfect!</p></div>'}
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn btn-p btn-sm" id="retrybtn">Retry full</button>
+    ${errCnt>0?`<button class="btn btn-red btn-sm" id="errorsbtn">Practice ${errCnt} errors</button>`:''}
+    <button class="btn btn-sm" id="testbackbtn">\u2190 Back to test</button>
+  </div>`;}
+
+// ── BIND ──────────────────────────────────────────────
+function bind(){
+  const on=(id,fn)=>{const e=document.getElementById(id);if(e)e.onclick=fn;};
+
+  // Auth
+  const emailI=document.getElementById('emailinp');
+  if(emailI) emailI.oninput=e=>S.authEmail=e.target.value;
+  on('magicbtn',async()=>{
+    if(!S.authEmail){S.error='Enter your email.';r();return;}
+    S.error='';
+    const{error}=await db.auth.signInWithOtp({email:S.authEmail,options:{emailRedirectTo:location.href}});
+    if(error){S.error=error.message;r();return;}
+    S.authSent=true;r();
+  });
+  on('backtologin',()=>{S.authSent=false;r();});
+
+  // Home
+  on('newbtn',()=>{S.showNewTest=!S.showNewTest;S.error='';S.okMsg='';r();});
+  on('settingsbtn',()=>{S.showSettings=!S.showSettings;S.error='';S.okMsg='';r();});
+  on('cancelnew',()=>{S.showNewTest=false;r();});
+  on('createbtn',async()=>{
+    const name=document.getElementById('nname')?.value?.trim();
+    const date=document.getElementById('ndate')?.value;
+    if(!name){S.error='Enter a test name.';r();return;}
+    try{const t=await dbCreateTest(name,date||new Date().toISOString().slice(0,10));S.showNewTest=false;S.activeTestId=t.id;S.stage='test';S.error='';r();}
+    catch(e){S.error=e.message;r();}
+  });
+  const ni=document.getElementById('nname');if(ni)ni.oninput=e=>S.newName=e.target.value;
+  const di=document.getElementById('ndate');if(di)di.onchange=e=>S.newDate=e.target.value;
+  document.querySelectorAll('.test-row').forEach(el=>el.onclick=()=>{S.activeTestId=el.dataset.tid;S.stage='test';S.error='';r();});
+  on('signoutbtn',async()=>{await db.auth.signOut();S.stage='auth';S.tests=[];S.user=null;r();});
+  on('migratebtn',migrateLocal);
+  on('togglekey',()=>{S.showKey=!S.showKey;r();});
+  const ai=document.getElementById('apikey');if(ai)ai.oninput=e=>{S.apiKey=e.target.value;localStorage.setItem('groq_key',S.apiKey);};
+  const ms=document.getElementById('modelsel');if(ms)ms.onchange=e=>{S.model=e.target.value;localStorage.setItem('groq_model',S.model);};
+
+  // Test
+  on('homebtn',()=>{S.stage='home';S.error='';r();});
+  on('delbtn',async()=>{
+    if(!confirm('Delete this test?')) return;
+    try{await dbDeleteTest(S.activeTestId);S.stage='home';S.activeTestId=null;r();}
+    catch(e){S.error=e.message;r();}
+  });
+  document.querySelectorAll('[data-upload]').forEach(el=>el.onclick=e=>{e.stopPropagation();S.activeModId=el.dataset.upload;S.uploadFile=null;S.error='';S.stage='upload';r();});
+  document.querySelectorAll('[data-practice]').forEach(el=>el.onclick=e=>{
+    e.stopPropagation();
+    const modId=el.dataset.practice,mode=el.dataset.mode;
+    const test=S.tests.find(t=>t.id===S.activeTestId);
+    const mod=test?.modules[modId];
+    if(!mod?.questions?.length) return;
+    let qs=[...mod.questions];
+    if(mode==='errors'){
+      const last=mod.attempts[mod.attempts.length-1];
+      if(last) qs=qs.filter((_,i)=>last.answers[i]!==qs[i].answer);
+      if(!qs.length) return;
+    }
+    S.activeModId=modId;S.quizQs=qs;S.quizMode=mode;
+    S.quizModDbId=mod.id;S.quizCurrent=0;S.quizAnswers={};S.quizRevealed={};S.quizSaved=false;
+    S.stage='quiz';S.error='';r();
+  });
+
+  // Upload
+  on('testbackbtn',()=>{S.stage='test';S.error='';S.uploadFile=null;r();});
+  const fi=document.getElementById('filein');if(fi)fi.onchange=e=>{S.uploadFile=e.target.files[0];S.error='';r();};
+  on('extractbtn',extractAndSave);
+
+  // Quiz
+  on('prevbtn',()=>{S.quizCurrent--;r();});
+  on('checkbtn',()=>{S.quizRevealed[S.quizCurrent]=true;r();});
+  on('nextbtn',async()=>{
+    if(S.quizCurrent===S.quizQs.length-1){await finishQuiz();S.stage='results';r();}
+    else{S.quizCurrent++;r();}
+  });
+  on('skipbtn',async()=>{
+    if(S.quizCurrent===S.quizQs.length-1){await finishQuiz();S.stage='results';r();}
+    else{S.quizCurrent++;r();}
+  });
+  on('quitbtn',()=>{if(confirm('Quit? Progress won\'t be saved.')){S.stage='test';r();}});
+  document.querySelectorAll('.opt').forEach(el=>el.onclick=()=>{if(!S.quizRevealed[S.quizCurrent]){S.quizAnswers[S.quizCurrent]=el.dataset.opt;r();}});
+
+  // Results
+  on('retrybtn',()=>{
+    const mod=S.tests.find(t=>t.id===S.activeTestId)?.modules[S.activeModId];
+    if(!mod) return;
+    S.quizQs=[...mod.questions];S.quizMode='full';S.quizModDbId=mod.id;
+    S.quizCurrent=0;S.quizAnswers={};S.quizRevealed={};S.quizSaved=false;S.stage='quiz';r();
+  });
+  on('errorsbtn',()=>{
+    const mod=S.tests.find(t=>t.id===S.activeTestId)?.modules[S.activeModId];
+    if(!mod) return;
+    const last=mod.attempts[mod.attempts.length-1];
+    const qs=mod.questions.filter((_,i)=>last?.answers[i]!==mod.questions[i].answer);
+    if(!qs.length) return;
+    S.quizQs=qs;S.quizMode='errors';S.quizModDbId=mod.id;
+    S.quizCurrent=0;S.quizAnswers={};S.quizRevealed={};S.quizSaved=false;S.stage='quiz';r();
+  });
+}
+
+async function finishQuiz(){
+  if(S.quizSaved||!S.quizModDbId) return;
+  const score=S.quizQs.filter((q,i)=>S.quizAnswers[i]===q.answer).length;
+  try{await dbSaveAttempt(S.quizModDbId,{...S.quizAnswers},score,S.quizQs.length,S.quizMode);}
+  catch(e){console.warn('save attempt failed',e);}
+  S.quizSaved=true;
+}
+
+// ── PDF + GROQ ────────────────────────────────────────
+const sleep=ms=>new Promise(res=>setTimeout(res,ms));
+function setP(msg,p){S.uploadProg=msg;S.uploadPct=p;const lm=document.getElementById('loadmsg'),pb=document.getElementById('pbar');if(lm)lm.textContent=msg;if(pb)pb.style.width=p+'%';}
+async function countdown(secs,b,total){for(let i=secs;i>0;i--){setP(`Rate limit \u2014 waiting ${i}s (batch ${b}/${total})\u2026`,S.uploadPct);await sleep(1000);}}
+
+async function pdfToImages(file){
+  const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;
+  const imgs=[];
+  for(let i=1;i<=pdf.numPages;i++){
+    setP(`Rendering page ${i}/${pdf.numPages}\u2026`,Math.round(i/pdf.numPages*30));
+    const page=await pdf.getPage(i);
+    const vp=page.getViewport({scale:0.7});
+    const canvas=document.createElement('canvas');
+    canvas.width=vp.width;canvas.height=vp.height;
+    await page.render({canvasContext:canvas.getContext('2d'),viewport:vp}).promise;
+    imgs.push(canvas.toDataURL('image/jpeg',0.45).split(',')[1]);
+  }
+  return imgs;
+}
+
+const PROMPT=`Extract ALL SAT questions from these PDF page images. Return ONLY a raw JSON array \u2014 no markdown, no explanation. Start with [ immediately.
+Each object: "number"(int), "passage"(text or ""), "question"(text), "options"({"A":"","B":"","C":"","D":""}), "answer"(correct letter), "explanation"(one sentence)`;
+
+async function callGroq(images){
+  const content=images.map(b=>({type:'image_url',image_url:{url:`data:image/jpeg;base64,${b}`}}));
+  content.push({type:'text',text:PROMPT});
+  const resp=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+    method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${S.apiKey}`},
+    body:JSON.stringify({model:S.model,messages:[{role:'user',content}],max_tokens:8192,temperature:0.1})
+  });
+  if(!resp.ok){
+    const e=await resp.json().catch(()=>({}));const msg=e.error?.message||`Error ${resp.status}`;
+    if(resp.status===429){const m=msg.match(/try again in ([\d.]+)s/i);const err=new Error(msg);err.isRL=true;err.wait=m?Math.ceil(parseFloat(m[1]))+2:62;throw err;}
+    throw new Error(msg);
+  }
+  return(await resp.json()).choices?.[0]?.message?.content||'';
+}
+function parseJ(t){try{return JSON.parse(t.trim());}catch{}const m=t.match(/\[[\s\S]*\]/);if(m){try{return JSON.parse(m[0]);}catch{}}return null;}
+
+async function extractAndSave(){
+  if(!S.uploadFile||!S.apiKey) return;
+  S.stage='uploading';S.error='';r();
+  try{
+    if(typeof pdfjsLib==='undefined') throw new Error('PDF.js failed to load.');
+    const images=await pdfToImages(S.uploadFile);
+    const BATCH=4,batches=[];
+    for(let i=0;i<images.length;i+=BATCH) batches.push(images.slice(i,i+BATCH));
+    let all=[];
+    for(let b=0;b<batches.length;b++){
+      setP(`Calling Groq \u2014 batch ${b+1}/${batches.length}\u2026`,30+Math.round((b/batches.length)*65));
+      for(let att=0;att<5;att++){
+        try{const text=await callGroq(batches[b]);const p=parseJ(text);if(Array.isArray(p))all=all.concat(p);break;}
+        catch(e){if(e.isRL&&att<4){await countdown(e.wait,b+1,batches.length);}else throw e;}
+      }
+    }
+    if(!all.length) throw new Error('No questions found in PDF.');
+    setP('Saving to Supabase\u2026',97);
+    await dbSaveModule(S.activeTestId,S.activeModId,all);
+    S.stage='test';S.uploadFile=null;S.error='';r();
+  }catch(e){S.stage='upload';S.error='\u26a0 '+e.message;r();}
+}
+
+// ── AUTH INIT ─────────────────────────────────────────
+if(SUPABASE_URL&&SUPABASE_ANON){
+  db.auth.onAuthStateChange(async(event,session)=>{
+    if(session){S.user=session.user;await loadData();}
+    else{S.user=null;S.stage='auth';r();}
+  });
+  db.auth.getSession().then(({data:{session}})=>{if(!session){S.stage='auth';r();}});
+}else{r();}
+</script>
+</body>
+</html>
