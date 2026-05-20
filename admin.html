@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SAT Practice — Admin</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f3;color:#1a1a1a;min-height:100vh}
+.wrap{max-width:800px;margin:0 auto;padding:2rem 1rem}
+h1{font-size:22px;font-weight:500}h2{font-size:17px;font-weight:500}
+.muted{color:#888;font-size:13px}
+.card{background:#fff;border:1px solid #e5e5e3;border-radius:12px;padding:1.25rem;margin-bottom:.75rem}
+.fl{font-size:11px;font-weight:500;color:#888;letter-spacing:.05em;display:block;margin-bottom:5px}
+input[type=email],input[type=password],input[type=text],textarea,select{width:100%;padding:8px 11px;border:1px solid #ddd;border-radius:8px;font-size:13px;font-family:inherit;background:#fafaf9;color:#1a1a1a}
+input:focus,textarea:focus,select:focus{outline:none;border-color:#999}
+textarea{font-family:monospace;font-size:12px;resize:vertical}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border:1px solid #ccc;border-radius:8px;background:transparent;font-size:13px;cursor:pointer;font-family:inherit}
+.btn:hover{background:#f0f0ee}.btn:active{transform:scale(.98)}
+.btn-p{background:#1a1a1a;color:#fff;border-color:#1a1a1a}.btn-p:hover{background:#333}
+.btn-sm{padding:5px 11px;font-size:12px}
+.btn-red{border-color:#f0b4b4;color:#A32D2D;background:#FCEBEB}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.err{font-size:13px;color:#A32D2D;padding:9px 13px;background:#FCEBEB;border-radius:8px;margin-bottom:.75rem}
+.ok{font-size:13px;color:#3B6D11;padding:9px 13px;background:#EAF3DE;border-radius:8px;margin-bottom:.75rem}
+.hint{font-size:12px;color:#888;margin-top:5px;line-height:1.5}
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;font-weight:500}
+.badge-rw{background:#e8f0fe;color:#1a56b0}.badge-math{background:#fef3e2;color:#92400e}
+.preview-q{padding:8px 0;border-bottom:1px solid #f0f0ee;font-size:13px}
+.preview-q:last-child{border-bottom:none}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.test-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f5f5f3;font-size:13px}
+.test-row:last-child{border-bottom:none}
+.ld{width:20px;height:20px;border:2px solid #e5e5e3;border-top-color:#1a1a1a;border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.tag{font-size:11px;padding:2px 8px;border-radius:6px;background:#f0f0ee;color:#666;border:1px solid #e5e5e3}
+pre{background:#f5f5f3;padding:1rem;border-radius:8px;font-size:12px;overflow-x:auto;line-height:1.6;white-space:pre-wrap}
+</style>
+</head>
+<body>
+<div class="wrap"><div id="app"></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL  = 'https://cvvqhforzpdjjhxibkeg.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2dnFoZm9yenBkampoeGlia2VnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NTM5MjYsImV4cCI6MjA5NDUyOTkyNn0.rpbJ7SB1SDdjQRHMHYPNQ04BRJbvWFYWJn80IEhToPU';
+
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+const MODS = ['RW1','RW2','Math1','Math2'];
+const MOD_LABEL = {RW1:'R&W — Module 1',RW2:'R&W — Module 2',Math1:'Math — Module 1',Math2:'Math — Module 2'};
+
+const S = {
+  stage:'loading', user:null,
+  tests:[],
+  jsonText:'', parsed:null, parseErr:'',
+  saving:false, msg:'', err:'',
+  authEmail:'', authSent:false,
+};
+
+function r(){
+  document.getElementById('app').innerHTML = ({
+    loading:loadingScreen, auth:authScreen, home:homeScreen
+  }[S.stage]||loadingScreen)();
+  bind();
+}
+
+function loadingScreen(){return`<div style="display:flex;align-items:center;justify-content:center;padding:5rem 0;gap:12px"><div class="ld"></div><span class="muted">Loading...</span></div>`;}
+
+function authScreen(){
+  if(S.authSent) return`<div style="max-width:400px;margin:3rem auto">
+    <h2 style="margin-bottom:.5rem">Check your email</h2>
+    <p class="muted" style="margin-bottom:1rem">Magic link sent to <strong>${S.authEmail}</strong>.</p>
+    <button class="btn btn-sm" id="backbtn">Back</button></div>`;
+  return`<div style="max-width:400px;margin:3rem auto">
+    <h1 style="margin-bottom:.25rem">SAT Admin</h1>
+    <p class="muted" style="margin-bottom:1.5rem">Sign in to manage tests.</p>
+    <div class="card">
+      <span class="fl">EMAIL</span>
+      <input type="email" id="emailinp" placeholder="you@example.com" value="${S.authEmail}" style="margin-bottom:.75rem"/>
+      ${S.err?`<div class="err" style="margin-bottom:.5rem">${S.err}</div>`:''}
+      <button class="btn btn-p" id="magicbtn" style="width:100%;justify-content:center">Send magic link</button>
+    </div></div>`;}
+
+function homeScreen(){
+  // Parse JSON preview
+  let preview = '';
+  if(S.jsonText.trim()){
+    if(S.parseErr) preview = `<div class="err" style="margin-top:.5rem">${S.parseErr}</div>`;
+    else if(S.parsed) preview = renderPreview(S.parsed);
+  }
+
+  const testList = S.tests.length
+    ? S.tests.map(t=>`<div class="test-row">
+        <div>
+          <span style="font-weight:500">${t.name}</span>
+          <span class="muted" style="margin-left:8px">${t.date||''}</span>
+          <span class="muted" style="margin-left:8px">${t.moduleCount}/4 modules</span>
+        </div>
+        <div style="display:flex;gap:6px">
+          ${MODS.map(m=>t.modules[m]?`<span class="badge ${m.startsWith('R')?'badge-rw':'badge-math'}">${m}</span>`:'').join('')}
+          <button class="btn btn-sm btn-red" data-del="${t.id}">Delete</button>
+        </div>
+      </div>`).join('')
+    : `<p class="muted" style="padding:1rem 0">No tests yet.</p>`;
+
+  return`
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
+    <div><h1>SAT Admin</h1><p class="muted">${S.user?.email||''}</p></div>
+    <button class="btn btn-sm btn-red" id="signoutbtn">Sign out</button>
+  </div>
+
+  ${S.msg?`<div class="ok">${S.msg}</div>`:''}
+  ${S.err?`<div class="err">${S.err}</div>`:''}
+
+  <!-- ADD TEST -->
+  <div class="card">
+    <h2 style="margin-bottom:.75rem">Add test module</h2>
+    <p style="font-size:13px;color:#555;margin-bottom:.75rem;line-height:1.6">
+      Use the prompt below with any AI (Claude, ChatGPT, Gemini), paste the JSON output here, and save.
+    </p>
+    <details style="margin-bottom:.75rem">
+      <summary style="font-size:13px;cursor:pointer;color:#555;font-weight:500">Show extraction prompt</summary>
+      <pre style="margin-top:.5rem">Extract all SAT questions from this PDF. Return ONLY a valid JSON object — no markdown:
+
+{
+  "test_name": "name from watermark e.g. 'May 2025 INT Test C'",
+  "test_date": "YYYY-MM-DD or null",
+  "source": "publisher from watermark e.g. 'CookingSAT'",
+  "module_type": "RW1 / RW2 / Math1 / Math2",
+  "questions": [
+    {
+      "number": 1,
+      "passage": "full passage text or empty string",
+      "question": "the question text",
+      "options": {"A":"...","B":"...","C":"...","D":"..."},
+      "answer": "correct letter",
+      "explanation": "one sentence why"
+    }
+  ]
+}
+
+Module type guide:
+  Section 1 Module 1 Reading and Writing → RW1
+  Section 1 Module 2 Reading and Writing → RW2
+  Section 2 Module 1 Math                → Math1
+  Section 2 Module 2 Math                → Math2</pre>
+    </details>
+    <span class="fl">PASTE JSON HERE</span>
+    <textarea id="jsoninp" rows="8" placeholder='{"test_name":"...","module_type":"RW1","questions":[...]}'>${S.jsonText}</textarea>
+    ${preview}
+    <div style="display:flex;gap:8px;margin-top:.75rem">
+      <button class="btn btn-p" id="savebtn" ${!S.parsed||S.saving?'disabled':''}>
+        ${S.saving?'<span class="ld"></span> Saving...':'Save to database'}
+      </button>
+      <button class="btn btn-sm" id="clearbtn">Clear</button>
+    </div>
+  </div>
+
+  <!-- EXISTING TESTS -->
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
+      <h2>All tests (${S.tests.length})</h2>
+      <button class="btn btn-sm" id="refreshbtn">Refresh</button>
+    </div>
+    ${testList}
+  </div>`;
+}
+
+function renderPreview(data){
+  const qCount = data.questions?.length||0;
+  const mod = data.module_type||'?';
+  return`<div style="margin-top:.75rem;padding:.75rem;background:#f5f5f3;border-radius:8px">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:.5rem;flex-wrap:wrap">
+      <span style="font-weight:500;font-size:14px">${data.test_name||'Unnamed test'}</span>
+      <span class="badge ${mod.startsWith('R')?'badge-rw':'badge-math'}">${MOD_LABEL[mod]||mod}</span>
+      <span class="tag">${qCount} questions</span>
+      ${data.test_date?`<span class="tag">${data.test_date}</span>`:''}
+      ${data.source?`<span class="tag">${data.source}</span>`:''}
+    </div>
+    <p class="muted">First 3 questions:</p>
+    ${(data.questions||[]).slice(0,3).map((q,i)=>`<div class="preview-q">
+      <strong>Q${q.number||i+1}.</strong> ${(q.question||'').substring(0,100)}${(q.question||'').length>100?'…':''}<br>
+      <span style="color:#3B6D11;font-size:12px">Answer: ${q.answer}</span>
+    </div>`).join('')}
+  </div>`;}
+
+function parseJSON(){
+  if(!S.jsonText.trim()){S.parsed=null;S.parseErr='';return;}
+  try{
+    const d=JSON.parse(S.jsonText);
+    if(!d.test_name) throw new Error('Missing "test_name"');
+    if(!d.module_type||!MODS.includes(d.module_type)) throw new Error('module_type must be one of: RW1, RW2, Math1, Math2');
+    if(!Array.isArray(d.questions)||!d.questions.length) throw new Error('questions array is empty or missing');
+    S.parsed=d; S.parseErr='';
+  }catch(e){S.parsed=null; S.parseErr='JSON error: '+e.message;}
+}
+
+async function saveTest(){
+  if(!S.parsed||S.saving) return;
+  S.saving=true; S.msg=''; S.err=''; r();
+  try{
+    const d=S.parsed;
+    // Find existing test with same name or create new
+    let testId=null;
+    const existing=S.tests.find(t=>t.name.toLowerCase()===d.test_name.toLowerCase());
+    if(existing){
+      testId=existing.id;
+    }else{
+      const{data,error}=await db.from('tests').insert({
+        name:d.test_name, date:d.test_date||null, source:d.source||'Unknown'
+      }).select().single();
+      if(error) throw new Error(error.message);
+      testId=data.id;
+    }
+    // Upsert module
+    const{error:merr}=await db.from('modules').upsert({
+      test_id:testId, module_type:d.module_type, questions:d.questions,
+      uploaded_at:new Date().toISOString()
+    },{onConflict:'test_id,module_type'});
+    if(merr) throw new Error(merr.message);
+    S.msg=`✓ Saved ${d.questions.length} questions for ${d.test_name} — ${MOD_LABEL[d.module_type]}`;
+    S.jsonText=''; S.parsed=null;
+    await loadTests();
+  }catch(e){S.err='Error: '+e.message;}
+  S.saving=false; r();
+}
+
+async function loadTests(){
+  const{data}=await db.from('tests').select('id,name,date,source,modules(id,module_type)').order('date',{ascending:false});
+  S.tests=(data||[]).map(t=>({
+    ...t,
+    moduleCount:(t.modules||[]).length,
+    modules:Object.fromEntries((t.modules||[]).map(m=>[m.module_type,m]))
+  }));
+}
+
+function bind(){
+  const on=(id,fn)=>{const e=document.getElementById(id);if(e)e.onclick=fn;};
+  // Auth
+  const ei=document.getElementById('emailinp');if(ei)ei.oninput=e=>S.authEmail=e.target.value;
+  on('backbtn',()=>{S.authSent=false;r();});
+  on('magicbtn',async()=>{
+    if(!S.authEmail){S.err='Enter email.';r();return;}
+    const{error}=await db.auth.signInWithOtp({email:S.authEmail,options:{emailRedirectTo:location.href}});
+    if(error){S.err=error.message;r();return;}
+    S.authSent=true;S.err='';r();
+  });
+  on('signoutbtn',async()=>{await db.auth.signOut();S.stage='auth';S.user=null;r();});
+  // JSON input
+  const ji=document.getElementById('jsoninp');
+  if(ji) ji.oninput=e=>{S.jsonText=e.target.value;parseJSON();r();};
+  on('savebtn',saveTest);
+  on('clearbtn',()=>{S.jsonText='';S.parsed=null;S.parseErr='';r();});
+  on('refreshbtn',async()=>{await loadTests();r();});
+  // Delete test
+  document.querySelectorAll('[data-del]').forEach(el=>el.onclick=async()=>{
+    if(!confirm('Delete this test and all its modules?')) return;
+    const{error}=await db.from('tests').delete().eq('id',el.dataset.del);
+    if(error){S.err=error.message;r();return;}
+    await loadTests();S.msg='Test deleted.';r();
+  });
+}
+
+// Auth init
+db.auth.onAuthStateChange(async(event,session)=>{
+  if(event==='SIGNED_OUT'){S.user=null;S.stage='auth';r();return;}
+  if(session&&S.stage!=='home'){S.user=session.user;await loadTests();S.stage='home';r();}
+});
+db.auth.getSession().then(async({data:{session}})=>{
+  if(S.stage!=='loading') return;
+  if(session){S.user=session.user;await loadTests();S.stage='home';}
+  else{S.stage='auth';}
+  r();
+});
+setTimeout(()=>{if(S.stage==='loading'){S.stage='auth';r();}},4000);
+</script>
+</body>
+</html>
